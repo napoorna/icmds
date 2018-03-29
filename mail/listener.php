@@ -1,0 +1,883 @@
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+require "PHPMailer/PHPMailer.php";
+require "PHPMailer/Exception.php";
+
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        header('Location: index.php');
+        exit();
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "cmd=_notify-validate&" . http_build_query($_POST));
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // file_put_contents("test.txt", $response);
+
+     if ($response == "VERIFIED") {
+     $email = $_POST['payer_email'];
+     $name = $_POST['first_name'];
+     $phone = $_POST['address_street'];
+
+     $item_no = $_POST['item_number'];
+     $item_name = $_POST['item_name'];
+     $currency = $_POST['mc_currency'];
+     $price = $_POST['mc_gross'];
+     $paymentStatus = $_POST['payment_status'];
+
+     if ($item_no==1 && $item_name=="Patron Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 250) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y'); //date('d-m-Y', strtotime(' +1 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y');//date('d-m-Y', strtotime(' +1 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==2 && $item_name=="Extended Family membership" && $currency=="USD" && $paymentStatus == "Completed" && $price == 180) {
+
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==3 && $item_name=="Full-Society Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 150) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==4 && $item_name=="Senior Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 100) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==5 && $item_name=="Patron Individual Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 125) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==6 && $item_name=="Individual Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 75) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==7 && $item_name=="Student / Senior Citizen" && $currency=="USD" && $paymentStatus == "Completed" && $price == 50) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     } elseif ($item_no==8 && $item_name=="Premier Membership" && $currency=="USD" && $paymentStatus == "Completed" && $price == 1000) {
+       require '../connection.php';
+
+       $timedate = date('d-m-Y h:m:a');
+
+       // Store This Transaction To The Database
+       $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+
+       // Checking The User (New OR Existing)
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+
+       if ($sql->num_rows == 0) {
+         // New User
+
+         // Process Of Creating Unique USER ID
+         $sql1 = $mysqli->query("SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1");
+         $row = $sql1->fetch_assoc();
+         $pastid = $row['user_id'];
+
+         $old = substr($pastid,0,8);$current = date('Ymd');
+
+         if($old == $current){ $finalid = $pastid+1; } else { $finalid = $current."0001"; }
+        // END Process Of Creating Unique USER ID
+
+        // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+        // END Process Of Creating User Membership ID
+
+
+        // Storing User Data To the DATABASE
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          if ($mysqli->query($insert)) {
+
+          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+        // Storing Membership Details To The DATABASE
+          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+             if ($mysqli->query($inser2)) {
+               $mail = new PHPMailer();
+               $mail->setFrom("no-reply@icmds.org", "Admin");
+               $mail->addAddress($email, $name);
+               $mail->isHTML(true);
+               $mail->Subject = "Your Membership Details";
+               $mail->Body = "
+                   Hello, <br><br>
+                   Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+                   Kind regards,
+                   ICMDS
+               ";
+
+               $mail->send();
+             }
+
+           }
+
+
+       } else {
+         // Existing User
+
+         $row = $sql->fetch_assoc();
+         $finalid = $row['user_id'];
+
+         // Process Of Creating User Membership ID
+          $sql2 = $mysqli->query("SELECT membership_id FROM member ORDER BY membership_id DESC LIMIT 1");
+          $row2 = $sql2->fetch_assoc();
+          $pastid2 = $row2['membership_id'];
+
+          $old2 = substr($pastid2,0,8); $current2 = date('Ymd');
+
+          if($old2 == $current2){ $finalid2 = $pastid2+1; } else { $finalid2 = $current2."001"; }
+         // END Process Of Creating User Membership ID
+
+
+         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+
+         // Storing Membership Details To The DATABASE
+         $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
+         if ($mysqli->query($inser2)) {
+           $mail = new PHPMailer();
+           $mail->setFrom("no-reply@icmds.org", "Admin");
+           $mail->addAddress($email, $name);
+           $mail->isHTML(true);
+           $mail->Subject = "Your Membership Details";
+           $mail->Body = "
+               Hello, <br><br>
+               Welcome to ICMDS. Your Unique UserID is $finalid. And Membership number is $finalid2, Membership Plan is $item_name, Valid till $enddate.<br><br>
+
+               Kind regards,
+               ICMDS
+           ";
+
+           $mail->send();
+         }
+
+       }
+
+     }else {
+       if ($paymentStatus == "Completed") {
+         $timedate = date('d-m-Y h:m:a');
+
+         // Store This Transaction To The Database
+         $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
+         $mail = new PHPMailer();
+         $mail->setFrom("no-reply@icmds.org", "Admin");
+         $mail->addAddress($email, $name);
+         $mail->isHTML(true);
+         $mail->Subject = "Your Membership Details";
+         $mail->Body = "
+             Hello, <br><br>
+             Something Went Wrong, Kindly Contact Admin.<br><br>
+
+             Kind regards,
+             ICMDS
+         ";
+
+         $mail->send();
+
+       }
+     }
+
+    }
+?>

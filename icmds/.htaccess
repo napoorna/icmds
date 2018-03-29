@@ -1,0 +1,7 @@
+ErrorDocument 404 http://icmds.org/404
+ErrorDocument 500 http://icmds.org/500
+#Remove php extension
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.*)$ $1.php

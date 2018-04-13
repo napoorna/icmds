@@ -388,12 +388,19 @@ if (isset($_GET['userid'])) {
                                       </thead>
                                         <tbody>
                                           <?php $sql = $mysqli->query("SELECT * FROM users u INNER JOIN member m ON m.user_id=u.user_id AND u.user_id='$userid'");
-                                            while ($rew = mysqli_fetch_assoc($sql)) { ?>
+                                            while ($rew = mysqli_fetch_assoc($sql)) {
+
+                                              $unit_s = explode("-",$rew['start_date']);
+                                              $unit_f = explode("-",$rew['end_date']);
+                                              $day_s = $unit_s[0]; $month_s = $unit_s[1]; $year_s = $unit_s[2];
+                                              $day_f = $unit_f[0]; $month_f = $unit_f[1]; $year_f = $unit_f[2];
+
+                                              ?>
                                             <tr>
                                               <td class="text-center"><?php echo $rew['membership_id'];?></td>
                                               <td class="text-center"><?php echo $rew['level'];?></td>
-                                              <td class="text-center"><?php echo $rew['start_date'];?></td>
-                                              <td class="text-center"><?php echo $rew['end_date'];?></td>
+                                              <td class="text-center"><?php echo $month_s."-".$day_s."-".$year_s;?></td>
+                                              <td class="text-center"><?php echo $month_f."-".$day_f."-".$year_f;?></td>
                                             </tr>
                                             <?php } ?>
                                         </tbody>

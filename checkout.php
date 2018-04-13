@@ -5,10 +5,16 @@ if (isset($_GET['eventid'])) {
   $_SESSION['time']=1;
   $eventid = $mysqli->real_escape_string($_GET['eventid']);
 
-  if (isset($_SESSION[$eventid])) {
-    unset($_SESSION[$eventid]);
-    $sql1 = $mysqli->query("SELECT event_name FROM event WHERE event_id='$eventid'");
+  // if (isset($_SESSION[$eventid])) {
+  //   unset($_SESSION[$eventid]);
+    $sql1 = $mysqli->query("SELECT event_name FROM event WHERE event_id='$eventid' AND status='1'");
     $res=$sql1->fetch_assoc();
+    if ($sql1->num_rows == 0) {
+      echo '<script language="javascript">';
+      echo 'alert("Event Not Found");';
+      echo 'window.location.href = "ticket"';
+      echo '</script>';
+    }
     $name = $res['event_name'];
 ?>
 <!DOCTYPE html>
@@ -175,7 +181,7 @@ if (isset($_GET['eventid'])) {
 
   							<td class="cart-product-quantity">
   								<div class="quantity">
-                    <select class="qnt_input" onclick="trigger();" name="quantities[]">
+                    <select class="qnt_input" onchange="trigger();" name="quantities[]">
                       <option>0</option>
                       <option>1</option>
                       <option>2</option>
@@ -483,9 +489,9 @@ if (isset($_GET['eventid'])) {
 </body>
 </html>
 <?php
-} else {
-  header('location: ticket');
-}
+// } else {
+//   header('location: ticket');
+// }
 } else {
   header('location: ticket');
 }

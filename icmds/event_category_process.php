@@ -2,9 +2,13 @@
 session_start();
 if (isset($_SESSION['icmds_login'])) {
 require 'connection.php';
+
+
 if (isset($_POST['addeventbtn']) || isset($_POST['btneventcategory']) || (isset($_GET['cid']) && isset($_GET['eventid'])) || isset($_POST['updatecategory'])) {
 
+
   if (isset($_POST['addeventbtn'])) {
+
     $_SESSION['count']=1;
     $_SESSION['event_id'] = $event_id= $mysqli->real_escape_string($_POST['finalid']);
     $event_name= $mysqli->real_escape_string($_POST['event_name']);
@@ -12,14 +16,59 @@ if (isset($_POST['addeventbtn']) || isset($_POST['btneventcategory']) || (isset(
     $event_description= $mysqli->real_escape_string($_POST['event_description']);
     $starttime= $mysqli->real_escape_string($_POST['event_starttime']);
     $endtime= $mysqli->real_escape_string($_POST['event_endtime']);
-    $_SESSION['event_category']= $mysqli->real_escape_string($_POST['event_category']);
-    if (isset($_POST['event_discount'])) {$discount= $mysqli->real_escape_string($_POST['event_discount']);}else{ $discount="";}
+    $_SESSION['event_category'] = $cat = $mysqli->real_escape_string($_POST['event_category']);
+    if (isset($_POST['event_discount'])) {$dis = 1; $discount= $mysqli->real_escape_string($_POST['event_discount']);}else{ $dsi = 0; $discount="";}
     $result = explode(" ", $starttime, 6);
     $date = $result[1];
     $month = $result[2];
     $year = $result[3];
+    $UploadFolder = "db/images";
 
-    $mysqli->query("INSERT INTO event (event_id,event_name,event_description,event_venue,start_time,end_time,day,month,year,discount) VALUES ('$event_id','$event_name','$event_description','$event_venue','$starttime','$endtime','$date','$month','$year','$discount')");
+    if ($_FILES['files']['size'][0] != 0) {
+        $temp = $_FILES['files']['tmp_name'][0];
+        $name = $_FILES['files']['name'][0];
+        $temp1 = explode(".", $name);
+        $newfilename = round(microtime(true)) . '.' . end($temp1);
+        move_uploaded_file($temp, $UploadFolder."/" . $newfilename);
+
+        if ($cat == 0) {
+          $sql = "INSERT INTO event (event_id,event_name,event_description,event_venue,start_time,end_time,day,month,year,discount,status,cover) VALUES ('$event_id','$event_name','$event_description','$event_venue','$starttime','$endtime','$date','$month','$year','0','0','$newfilename')";
+          if ($mysqli->query($sql)) {
+            echo '<script type="text/javascript">';
+            echo 'alert("Event Created");';
+            echo 'window.location.href="addevent"';
+            echo '</script>';
+          } else {
+            echo '<script type="text/javascript">';
+            echo 'alert("Failed to Create Event");';
+            echo 'window.location.href="addevent"';
+            echo '</script>';
+          }
+        } else {
+            $mysqli->query("INSERT INTO event (event_id,event_name,event_description,event_venue,start_time,end_time,day,month,year,discount,cover) VALUES ('$event_id','$event_name','$event_description','$event_venue','$starttime','$endtime','$date','$month','$year','$discount','$newfilename')");
+        }
+
+    } else {
+
+        if ($cat == 0) {
+          $sql = "INSERT INTO event (event_id,event_name,event_description,event_venue,start_time,end_time,day,month,year,discount,status) VALUES ('$event_id','$event_name','$event_description','$event_venue','$starttime','$endtime','$date','$month','$year','0','0')";
+          if ($mysqli->query($sql)) {
+            echo '<script type="text/javascript">';
+            echo 'alert("Event Created");';
+            echo 'window.location.href="addevent"';
+            echo '</script>';
+          } else {
+            echo '<script type="text/javascript">';
+            echo 'alert("Failed to Create Event");';
+            echo 'window.location.href="addevent"';
+            echo '</script>';
+          }
+        } else {
+            $mysqli->query("INSERT INTO event (event_id,event_name,event_description,event_venue,start_time,end_time,day,month,year,discount) VALUES ('$event_id','$event_name','$event_description','$event_venue','$starttime','$endtime','$date','$month','$year','$discount')");
+        }
+
+    }
+
 
   }
   if (isset($_POST['btneventcategory'])) {
@@ -490,7 +539,8 @@ if (isset($_POST['addeventbtn']) || isset($_POST['btneventcategory']) || (isset(
                                       <?php if (!isset($_GET['cid'])): ?>
                                           <center><button class="btn btn-primary waves-effect" type="submit" name="btneventcategory">SUBMIT</button></center>
                                       <?php else: ?>
-                                          <center><button class="btn btn-primary waves-effect" type="submit" name="updatecategory">UPDATE</button>
+                                          <center>
+                                            <button class="btn btn-primary waves-effect" type="submit" name="updatecategory">UPDATE</button>
                                             <button type="button" name="button" onclick="history.go(-1)" class="btn btn-success">Go Back</button>
                                           </center>
                                       <?php endif; ?>

@@ -331,8 +331,10 @@ if (isset($_GET['eventid'])) {
         <div class="container-fluid">
             <div class="row">
               <div class="card">
-
                 <div class="body" style="padding:3%;">
+                  <div class="row text-center">
+                    <img src="db/images/<?php echo $row['cover'];?>" height="150px" alt="No Image">
+                  </div>
                   <center><h3>Event Details</h3></center><br><br>
                   <form>
                     <div>
@@ -407,6 +409,8 @@ if (isset($_GET['eventid'])) {
                     </div>
                     </div>
                       <br><hr>
+                      <?php if ($row['status'] == 1): ?>
+
                       <h4 class="text-center">All Tickets</h4>
                               <div class="table-responsive">
                                   <table class="table table-bordered table-striped table-hover dataTable js-exportable">
@@ -435,6 +439,7 @@ if (isset($_GET['eventid'])) {
                                         </tbody>
                                   </table>
                               </div>
+                          <?php endif; ?>
                   </form>
 
                   <center><button type="button" name="button" onclick="history.go(-1)" class="btn btn-success">Go Back</button></center>

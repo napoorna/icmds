@@ -1,13 +1,15 @@
 <?php
 session_start();
 require 'connection.php';
+include "db/class.phpmailer.php";
+include "db/class.smtp.php";
 
 if (isset($_SESSION['icmds_login'])) {
   header('location: index');
 }
 
 if (isset($_POST['btnreset'])) {
-  $mysqli->real_escape_string($_POST['email']);
+  $email = $mysqli->real_escape_string($_POST['email']);
 
   $sql = $mysqli->query("SELECT id FROM admin WHERE email='$email'");
   if ($sql->num_rows == 0) {
@@ -22,13 +24,17 @@ if (isset($_POST['btnreset'])) {
 
         $updatequery = $mysqli->query("UPDATE admin SET token='$str' WHERE email='$email'");
         # mail send
-        use db\PHPMailer\PHPMailer\PHPMailer;
-        require_once "db/PHPMailer/PHPMailer.php";
-        require_once "db/PHPMailer/Exception.php";
 
         $mail = new PHPMailer();
-        $mail->addAddress($email);     // Add a recipient
-  	    $mail->setFrom("no-reply@icmds.org", "Admin");
+        $mail->isSMTP();
+        $mail->Host = "icmds.org";
+        $mail->SMTPAuth= true;
+        $mail->Username= "admin@icmds.org";
+        $mail->Password= "Admin@123";
+        $mail->Port =587;
+        $mail->From="admin@icmds.org";
+        $mail->FromName="Admin";
+        $mail->AddAddress ($email);
   	    $mail->Subject = "Reset Password of ICMDS Database";
   	    $mail->isHTML(true);
 

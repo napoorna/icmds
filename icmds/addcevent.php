@@ -10,14 +10,42 @@ if (isset($_POST['addceventbtn'])) {
   $starttime = $mysqli->real_escape_string($_POST['event_starttime']);
   $endtime = $mysqli->real_escape_string($_POST['event_endtime']);
   $cid = $mysqli->real_escape_string($_POST['finalid']);
+  $UploadFolder = "db/images";
 
-  $insert = "INSERT INTO cevent(event_id,event_name,event_description,event_venue,start_time,end_time) VALUES ('$cid','$name','$description','$venue','$starttime','$endtime')";
-  if ($mysqli->query($insert)) {
-    echo '<script language="javascript">';
-    echo 'alert("Community Event Data Added");';
-    echo 'window.location.href = "cevents"';
-    echo '</script>';
+  if ($_FILES['file']['size'] != 0) {
+    $temp = $_FILES['file']['tmp_name'];
+    $name1 = $_FILES['file']['name'];
+    $temp1 = explode(".", $name1);
+    $newfilename = round(microtime(true)) . '.' . end($temp1);
+    move_uploaded_file($temp, $UploadFolder."/" . $newfilename);
+
+    $insert = "INSERT INTO cevent(event_id,event_name,event_description,event_venue,start_time,end_time,cover) VALUES ('$cid','$name','$description','$venue','$starttime','$endtime','$newfilename')";
+    if ($mysqli->query($insert)) {
+      echo '<script language="javascript">';
+      echo 'alert("Community Event Details Added");';
+      echo 'window.location.href = "cevents"';
+      echo '</script>';
+    } else {
+      echo '<script language="javascript">';
+      echo 'alert("Failed To Add Community Event Details! Try Again");';
+      echo 'window.location.href = "cevents"';
+      echo '</script>';
+    }
+  } else {
+    $insert = "INSERT INTO cevent(event_id,event_name,event_description,event_venue,start_time,end_time) VALUES ('$cid','$name','$description','$venue','$starttime','$endtime')";
+    if ($mysqli->query($insert)) {
+      echo '<script language="javascript">';
+      echo 'alert("Community Event Details Added");';
+      echo 'window.location.href = "cevents"';
+      echo '</script>';
+    } else {
+      echo '<script language="javascript">';
+      echo 'alert("Failed To Add Community Event Details! Try Again");';
+      echo 'window.location.href = "cevents"';
+      echo '</script>';
+    }
   }
+
 
 }
 
@@ -369,7 +397,7 @@ if (isset($_POST['addceventbtn'])) {
 
                             ?>
                             <div class="body">
-                                <form id="form_validation" method="POST" action="addcevent">
+                                <form id="form_validation" method="POST" action="addcevent" enctype="multipart/form-data">
                                     <div class="col-sm-12">
                                       <div class="col-sm-6">
                                         <div class="form-group form-float">
@@ -417,7 +445,9 @@ if (isset($_POST['addceventbtn'])) {
                                                 </div>
                                             </div>
                                       </div>
-
+                                      <div class="col-sm-12">
+                                        <input type="file" id="file" name="file">
+                                      </div>
                                     <center><button class="btn btn-primary waves-effect" type="submit" name="addceventbtn">SUBMIT</button></center>
                                 </form>
                             </div>
@@ -474,6 +504,31 @@ if (isset($_POST['addceventbtn'])) {
         }
       }
     </script>
+
+    <script type="text/javascript">
+
+  $(document).ready(function(){
+
+  var _URL = window.URL || window.webkitURL;
+      $("#file").change(function(e) {
+
+          var image, file;
+
+          file = this.files[0];
+
+              image = new Image();
+                  var fileType = file["type"];
+            var ValidImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+            if ($.inArray(fileType, ValidImageTypes) < 0) {
+                 // invalid file type code goes here.
+                 alert('File Format Not Supported, File must be in jpg, jpeg or png Format');
+                 $("#file").val('');
+            }
+            image.src = _URL.createObjectURL(file);
+
+      });
+    });
+  </script>
 </body>
 
 </html>

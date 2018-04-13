@@ -1,12 +1,10 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-require "PHPMailer/PHPMailer.php";
-require "PHPMailer/Exception.php";
-
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        header('Location: index.php');
-        exit();
-    }
+        header('location: ../');
+    } else {
+      include "class.phpmailer.php";
+      include "class.smtp.php";
+      require '../connection.php';
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr');
@@ -18,12 +16,12 @@ require "PHPMailer/Exception.php";
     $response = curl_exec($ch);
     curl_close($ch);
 
-    // file_put_contents("test.txt", $response);
 
-     if ($response == "VERIFIED") {
-     $email = $_POST['payer_email'];
-     $name = $_POST['first_name'];
-     $phone = $_POST['address_street'];
+      $unit = explode(",",$_POST['custom']);
+      $username = $unit[0];
+      $userphone = $unit[1];
+      $useremail = $unit[2];
+      $email = $_POST['payer_email'];
 
      $item_no = $_POST['item_number'];
      $item_name = $_POST['item_name'];
@@ -34,13 +32,13 @@ require "PHPMailer/Exception.php";
      if ($item_no==1 && $item_name=="Patron Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 250) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -67,7 +65,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y'); //date('d-m-Y', strtotime(' +1 day'));
@@ -76,9 +74,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -117,9 +122,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -138,13 +150,13 @@ require "PHPMailer/Exception.php";
 
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -171,7 +183,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -180,9 +192,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -221,9 +240,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -241,13 +267,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==3 && $item_name=="Full-Society Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 150) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -274,7 +300,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -283,9 +309,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -324,9 +357,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -344,13 +384,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==4 && $item_name=="Senior Family Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 100) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -377,7 +417,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -386,9 +426,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -427,9 +474,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -447,13 +501,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==5 && $item_name=="Patron Individual Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 125) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -480,7 +534,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -489,9 +543,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -529,9 +590,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -549,13 +617,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==6 && $item_name=="Individual Members" && $currency=="USD" && $paymentStatus == "Completed" && $price == 75) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -582,7 +650,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -591,9 +659,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -632,9 +707,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -652,13 +734,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==7 && $item_name=="Student / Senior Citizen" && $currency=="USD" && $paymentStatus == "Completed" && $price == 50) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -685,7 +767,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -694,9 +776,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -735,9 +824,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -755,13 +851,13 @@ require "PHPMailer/Exception.php";
      } elseif ($item_no==8 && $item_name=="Premier Membership" && $currency=="USD" && $paymentStatus == "Completed" && $price == 1000) {
        require '../connection.php';
 
-       $timedate = date('d-m-Y h:m:a');
+       $timedate = $_POST['payment_date'];
 
        // Store This Transaction To The Database
        $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
 
        // Checking The User (New OR Existing)
-       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$email'");
+       $sql = $mysqli->query("SELECT user_id FROM users WHERE email='$useremail'");
 
        if ($sql->num_rows == 0) {
          // New User
@@ -788,7 +884,7 @@ require "PHPMailer/Exception.php";
 
 
         // Storing User Data To the DATABASE
-          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$name','$email','$phone')";
+          $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
           $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
@@ -797,9 +893,16 @@ require "PHPMailer/Exception.php";
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
              if ($mysqli->query($inser2)) {
                $mail = new PHPMailer();
-               $mail->setFrom("no-reply@icmds.org", "Admin");
-               $mail->addAddress($email, $name);
-               $mail->isHTML(true);
+               $mail->isSMTP();
+               $mail->Host = "icmds.org";
+               $mail->SMTPAuth= true;
+               $mail->Username= "tickets@icmds.org";
+               $mail->Password= "Tickets@123";
+               $mail->Port =587;
+               $mail->From="tickets@icmds.org";
+               $mail->FromName="Admin";
+               $mail->AddAddress ($useremail);
+               $mail->IsHTML(true);
                $mail->Subject = "Your Membership Details";
                $mail->Body = "
                    Hello, <br><br>
@@ -838,9 +941,16 @@ require "PHPMailer/Exception.php";
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
          if ($mysqli->query($inser2)) {
            $mail = new PHPMailer();
-           $mail->setFrom("no-reply@icmds.org", "Admin");
-           $mail->addAddress($email, $name);
-           $mail->isHTML(true);
+           $mail->isSMTP();
+           $mail->Host = "icmds.org";
+           $mail->SMTPAuth= true;
+           $mail->Username= "tickets@icmds.org";
+           $mail->Password= "Tickets@123";
+           $mail->Port =587;
+           $mail->From="tickets@icmds.org";
+           $mail->FromName="Admin";
+           $mail->AddAddress ($useremail);
+           $mail->IsHTML(true);
            $mail->Subject = "Your Membership Details";
            $mail->Body = "
                Hello, <br><br>
@@ -857,14 +967,21 @@ require "PHPMailer/Exception.php";
 
      }else {
        if ($paymentStatus == "Completed") {
-         $timedate = date('d-m-Y h:m:a');
+         $timedate = $_POST['payment_date'];
 
          // Store This Transaction To The Database
          $mysqli->query("INSERT INTO transaction(email,timedate,amount) VALUES ('$email','$timedate','$price')");
          $mail = new PHPMailer();
-         $mail->setFrom("no-reply@icmds.org", "Admin");
-         $mail->addAddress($email, $name);
-         $mail->isHTML(true);
+         $mail->isSMTP();
+         $mail->Host = "icmds.org";
+         $mail->SMTPAuth= true;
+         $mail->Username= "tickets@icmds.org";
+         $mail->Password= "Tickets@123";
+         $mail->Port =587;
+         $mail->From="tickets@icmds.org";
+         $mail->FromName="Admin";
+         $mail->AddAddress ($useremail);
+         $mail->IsHTML(true);
          $mail->Subject = "Your Membership Details";
          $mail->Body = "
              Hello, <br><br>
@@ -879,5 +996,5 @@ require "PHPMailer/Exception.php";
        }
      }
 
-    }
+  }
 ?>

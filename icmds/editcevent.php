@@ -3,7 +3,31 @@ session_start();
 if (isset($_SESSION['icmds_login'])) {
 require_once 'connection.php';
 
-if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST['eventid'])) || isset($_POST['addcdocbtn'])) {
+if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST['eventid'])) || isset($_POST['addcdocbtn']) || (isset($_POST['pic']) && isset($_POST['eventid']))) {
+
+  if (isset($_POST['pic']) && isset($_POST['eventid'])) {
+    $eventid = $mysqli->real_escape_string($_POST['eventid']);
+    $UploadFolder = "db/images";
+      $temp = $_FILES["cover"]["tmp_name"];
+      $name = $_FILES["cover"]["name"];
+      $temp1 = explode(".", $name);
+      $newfilename = round(microtime(true)) . '.' . end($temp1);
+      if (move_uploaded_file($temp, $UploadFolder."/" . $newfilename)) {
+        $insertqry = "UPDATE cevent SET cover='$newfilename' WHERE event_id='$eventid'";
+        if ($mysqli->query($insertqry)) {
+          echo '<script language="javascript">';
+          echo 'alert("Community Event Cover Updated");';
+          echo 'window.location.href = "editcevent?eventid='.$eventid.'"';
+          echo '</script>';
+        } else {
+          echo '<script language="javascript">';
+          echo 'alert("Failed To Update Community Event Cover! Try Again");';
+          echo 'window.location.href = "editcevent?eventid='.$eventid.'"';
+          echo '</script>';
+        }
+
+      }
+  }
 
   if (isset($_POST['addcdocbtn'])) {
     $eventid = $mysqli->real_escape_string($_POST['eventid']);
@@ -413,6 +437,10 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                             </div>
 
                             <div class="body">
+                              <div class="row text-center">
+                                <img src="db/images/<?php echo $row['cover'];?>" height="150px" alt="No Image">
+                              </div>
+                              <hr>
                                 <form id="form_validation" method="POST" action="editcevent">
                                     <div class="col-sm-12">
                                       <div class="col-sm-6">
@@ -463,6 +491,18 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                                       </div>
                                     <center><button class="btn btn-primary waves-effect" type="submit" name="updateeventbtn">UPDATE</button></center>
                                 </form>
+                                <hr>
+                                <div class="row container-fluid">
+                                  <center><h4>Change Community Event Cover</h4></center>
+                                  <form action="editcevent" method="post" enctype="multipart/form-data">
+                                    <div class="col-sm-6">
+                                      <input type="file" id="f" name="cover" required>
+                                      <input type="hidden" name="eventid" value="<?php echo $_GET['eventid']?>">
+                                    </div>
+                                    <input type="submit" class="col-sm-6 btn btn-success" name="pic" value="Update Cover Image">
+                                  </form>
+                                </div>
+                                <hr>
                                 <br><br>
                             </div>
                             <div class="header">
@@ -611,6 +651,36 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
         });
       });
     </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+
+    var _URL = window.URL || window.webkitURL;
+        $("#f").change(function(e) {
+
+            var image, file;
+
+            // for (var i = this.files.length - 1; i >= 0; i--) {
+
+          file = this.files[0]
+
+              image = new Image();
+              var fileType = file["type"];
+              var ValidImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+              if ($.inArray(fileType, ValidImageTypes) < 0) {
+                   // invalid file type code goes here.
+                   alert('File Format Not Supported, File must be in jpg, jpeg or png Format');
+                   $("#f").val('');
+              }
+
+                image.src = _URL.createObjectURL(file);
+
+
+        });
+      });
+    </script>
+
+
     <script type="text/javascript">
       function remove(f,t){
         var v = confirm('Confirm Remove ?');
@@ -641,7 +711,7 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
 <?php
 }
 } else {
-  header('location: events');
+  header('location: cevents');
 }
 } else {
   $_SESSION['icmds_message'] = "Login First To Access That Page";

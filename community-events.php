@@ -112,36 +112,45 @@
 
                   <?php
                   $sql = $mysqli->query("SELECT * FROM cevent");
+                  if ($sql->num_rows == 0) { ?>
+                    <div class="text-center">
+                      <h5>Currently No Community Events are There</h5>
+                      <br><br>
+                    </div>
+                  <?php
+                  }
                   while ($row = mysqli_fetch_assoc($sql)) {
                     $eventid = $row['event_id'];
                     $qry = $mysqli->query("SELECT docs FROM ceventdocs WHERE event_id='$eventid'");
-                    if ($qry->num_rows>0) {
-                      $row1 = $qry->fetch_assoc();
+                    $row1 = $qry->fetch_assoc();
                   ?>
 
                     <!-- Post item-->
                     <div class="post-item border">
                         <div class="post-item-wrap">
                             <div class="post-image">
-                              <a href="community-events-gallery?event_id=<?php echo $eventid;?>">
-                                  <img alt="" src="image/<?php echo $row1['docs'];?>">
-                              </a>
+                              <!-- <a href="community-events-gallery?event_id=<?php echo $eventid;?>"> -->
+                                  <img alt="No Image" height="350px" src="icmds/db/images/<?php echo $row['cover'];?>">
+                              <!-- </a> -->
 
                             </div>
                             <div class="post-item-description">
                                 <span class="post-meta-date"><i class="fa fa-calendar-o"></i><?php echo $row['start_time']?></span>
 
-                                <h2><a href="community-events-gallery?event_id=<?php echo $eventid;?>"><?php echo $row['event_name']?></a></h2>
+                                <h2><?php echo $row['event_name']?></h2>
                                 <p><?php echo $row['event_description']?></p>
-
-                                <a href="community-events-gallery?event_id=<?php echo $eventid;?>" class="item-link">View Images <i class="fa fa-arrow-right"></i></a>
+                                <?php if ($qry->num_rows != 0): ?>
+                                  <a href="community-events-gallery?event_id=<?php echo $eventid;?>" class="item-link">View Images <i class="fa fa-arrow-right"></i></a>
+                                <?php else: ?>
+                                  <p class="item-link">That's all</p>
+                                <?php endif; ?>
 
                             </div>
                         </div>
                     </div>
                     <!-- end: Post item-->
                     <?php
-                      }
+
                     }
                     ?>
 

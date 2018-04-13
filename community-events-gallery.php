@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <ul class="top-menu">
-                            
+
                             <li><a href="#">Email: questions@icmds.org</a></li>
                         </ul>
                     </div>
@@ -35,7 +35,7 @@
                         <div class="social-icons social-icons-colored-hover">
                             <ul>
                                 <li class="social-facebook"><a href="https://www.facebook.com/ICMDS-1569280673289457"><i class="fa fa-facebook"></i></a></li>
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                 <div class="grid-layout grid-2-columns" data-margin="20" data-item="grid-item" data-lightbox="gallery">
                   <?php while ($row = mysqli_fetch_assoc($qry)) { ?>
                     <div class="grid-item">
-                            <a class="image-hover-zoom" href="image/<?php echo $row['docs'];?>" data-lightbox="gallery-item"><img src="image/<?php echo $row['docs'];?>"></a>
+                            <a class="image-hover-zoom" href="icmds/db/images/<?php echo $row['docs'];?>" data-lightbox="gallery-item"><img src="icmds/db/images/<?php echo $row['docs'];?>"></a>
                     </div>
                   <?php } ?>
                 </div>
@@ -150,14 +150,14 @@
                                     <li><i class="fa fa-map-marker"></i> PO Box 5527<br>Cary, NC 27511<br>USA
                                     <li><i class="fa fa-envelope"></i> <a href="mailto:first.last@example.com">questions@icmds.org</a>
                                     </li>
-                                    
+
                                 </ul>
                                 <!-- Social icons -->
                                 <div class="social-icons social-icons-border float-left m-t-20">
                                     <ul>
 
                                         <li class="social-facebook"><a href="https://www.facebook.com/ICMDS-1569280673289457/"><i class="fa fa-facebook"></i></a></li>
-                                        
+
                                     </ul>
                                 </div>
                                 <!-- end: Social icons -->

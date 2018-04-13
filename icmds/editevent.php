@@ -3,8 +3,31 @@ session_start();
 if (isset($_SESSION['icmds_login'])) {
 require_once 'connection.php';
 
-if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST['eventid']))) {
+if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST['eventid'])) || (isset($_POST['pic']) && isset($_POST['eventid']))) {
 
+  if (isset($_POST['pic']) && isset($_POST['eventid'])) {
+    $eventid = $mysqli->real_escape_string($_POST['eventid']);
+    $UploadFolder = "db/images";
+      $temp = $_FILES["cover"]["tmp_name"];
+      $name = $_FILES["cover"]["name"];
+      $temp1 = explode(".", $name);
+      $newfilename = round(microtime(true)) . '.' . end($temp1);
+      if (move_uploaded_file($temp, $UploadFolder."/" . $newfilename)) {
+        $insertqry = "UPDATE event SET cover='$newfilename' WHERE event_id='$eventid'";
+        if ($mysqli->query($insertqry)) {
+          echo '<script language="javascript">';
+          echo 'alert("Event Cover Updated");';
+          echo 'window.location.href = "editevent?eventid='.$eventid.'"';
+          echo '</script>';
+        } else {
+          echo '<script language="javascript">';
+          echo 'alert("Failed To Update Event Cover! Try Again");';
+          echo 'window.location.href = "editevent?eventid='.$eventid.'"';
+          echo '</script>';
+        }
+
+      }
+  }
 
   if (isset($_POST['updateeventbtn']) && isset($_POST['eventid'])) {
 
@@ -14,15 +37,20 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
     $event_description= $mysqli->real_escape_string($_POST['event_description']);
     $starttime= $mysqli->real_escape_string($_POST['event_starttime']);
     $endtime= $mysqli->real_escape_string($_POST['event_endtime']);
+    $status = $_POST['status'];
     if (isset($_POST['event_discount'])) {$discount= $mysqli->real_escape_string($_POST['event_discount']);}else{ $discount="";}
-
 
     $result = explode(" ", $starttime, 6);
     $date = $result[1];
     $month = $result[2];
     $year = $result[3];
 
-    $updatesql = "UPDATE event SET event_name = '$event_name', event_description = '$event_description', event_venue = '$event_venue', start_time = '$starttime', end_time = '$endtime', day = '$date', month = '$month', year = '$year', discount = '$discount' WHERE event_id = '$event_id'";
+    if ($status == 0) {
+        $updatesql = "UPDATE event SET event_name = '$event_name', event_description = '$event_description', event_venue = '$event_venue', start_time = '$starttime', end_time = '$endtime', day = '$date', month = '$month', year = '$year', discount = '0' WHERE event_id = '$event_id'";
+    } else {
+        $updatesql = "UPDATE event SET event_name = '$event_name', event_description = '$event_description', event_venue = '$event_venue', start_time = '$starttime', end_time = '$endtime', day = '$date', month = '$month', year = '$year', discount = '$discount' WHERE event_id = '$event_id'";
+    }
+
     if ($mysqli->query($updatesql)) {
       echo '<script type="text/javascript">';
       echo 'alert("Event Details Updated Successfully");';
@@ -398,6 +426,10 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                             </div>
 
                             <div class="body">
+                              <div class="row text-center">
+                                <img src="db/images/<?php echo $row['cover'];?>" height="150px" alt="No Image">
+                              </div>
+                              <hr>
                                 <form id="form_validation" method="POST" action="editevent">
                                     <div class="col-sm-12">
                                       <div class="col-sm-6">
@@ -446,43 +478,59 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                                                 </div>
                                             </div>
                                       </div>
-                                      <div class="col-sm-12">
-                                        <div class="col-sm-6">
-                                          <div class="form-group form-float">
-                                              <div class="form-line">
-                                                  <input type="text" class="form-control" name="event_discount" value="<?php echo $row['discount'];?>" min="1">
-                                                  <label class="form-label">Membership Discount</label>
-                                              </div>
+                                      <?php if ($row['status'] != 0): ?>
+                                        <div class="col-sm-12">
+                                          <div class="col-sm-6">
+                                            <div class="form-group form-float">
+                                                <div class="form-line">
+                                                    <input type="text" class="form-control" name="event_discount" value="<?php echo $row['discount'];?>" min="1">
+                                                    <label class="form-label">Membership Discount</label>
+                                                </div>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
+                                      <?php endif; ?>
+                                      <input type="hidden" name="status" value="<?php echo $row['status'];?>">
                                     <center><button class="btn btn-primary waves-effect" type="submit" name="updateeventbtn">UPDATE</button></center>
                                 </form>
-                                <br><br>
-
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped table-hover dataTable js-exportable">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">Category</th>
-                                                <th class="text-center">Seat</th>
-                                                <th class="text-center">Price</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                          <tbody>
-                                            <?php $sql = $mysqli->query("SELECT * FROM event_ticket_category_map WHERE event_id='$id'");
-                                              while ($row = mysqli_fetch_assoc($sql)) { ?>
-                                              <tr>
-                                                <td class="text-center"><?php echo $row['category'];?></td>
-                                                <td class="text-center"><?php echo $row['seat'];?></td>
-                                                <td class="text-center"><?php echo $row['price'];?></td>
-                                                <td class="text-center"><a href="event_category_process?cid=<?php echo $row['id'];?>&eventid=<?php echo $id;?>"><button type="button" class="btn btn-success" name="button">Edit</button></a></td>
-                                              </tr>
-                                              <?php } ?>
-                                          </tbody>
-                                    </table>
+                                <hr>
+                                <div class="row container-fluid">
+                                  <center><h3>Change Event Cover</h3></center>
+                                  <form action="editevent" method="post" enctype="multipart/form-data">
+                                    <div class="col-sm-6">
+                                      <input type="file" id="file" name="cover" required>
+                                      <input type="hidden" name="eventid" value="<?php echo $_GET['eventid']?>">
+                                    </div>
+                                    <input type="submit" class="col-sm-6 btn btn-success" name="pic" value="Update Cover Image">
+                                  </form>
                                 </div>
+                                <hr>
+                                <br><br>
+                                <?php if ($row['status'] != 0): ?>
+                                  <div class="table-responsive">
+                                      <table class="table table-bordered table-striped table-hover dataTable js-exportable">
+                                          <thead>
+                                              <tr>
+                                                  <th class="text-center">Category</th>
+                                                  <th class="text-center">Seat</th>
+                                                  <th class="text-center">Price</th>
+                                                  <th class="text-center">Action</th>
+                                              </tr>
+                                          </thead>
+                                            <tbody>
+                                              <?php $sql = $mysqli->query("SELECT * FROM event_ticket_category_map WHERE event_id='$id'");
+                                                while ($row = mysqli_fetch_assoc($sql)) { ?>
+                                                <tr>
+                                                  <td class="text-center"><?php echo $row['category'];?></td>
+                                                  <td class="text-center"><?php echo $row['seat'];?></td>
+                                                  <td class="text-center"><?php echo $row['price'];?></td>
+                                                  <td class="text-center"><a href="event_category_process?cid=<?php echo $row['id'];?>&eventid=<?php echo $id;?>"><button type="button" class="btn btn-success" name="button">Edit</button></a></td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                      </table>
+                                  </div>
+                                <?php endif; ?>
 
                             </div>
                         </div>
@@ -555,6 +603,34 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
       function cleardata(){
         document.getElementById('event_endtime').value = "";
       }
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+
+    var _URL = window.URL || window.webkitURL;
+        $("#file").change(function(e) {
+
+            var image, file;
+
+            // for (var i = this.files.length - 1; i >= 0; i--) {
+
+          file = this.files[0]
+
+              image = new Image();
+              var fileType = file["type"];
+              var ValidImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+              if ($.inArray(fileType, ValidImageTypes) < 0) {
+                   // invalid file type code goes here.
+                   alert('File Format Not Supported, File must be in jpg, jpeg or png Format');
+                   $("#file").val('');
+              }
+
+                image.src = _URL.createObjectURL(file);
+
+
+        });
+      });
     </script>
 </body>
 

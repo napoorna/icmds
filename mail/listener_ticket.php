@@ -1,14 +1,12 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-require "PHPMailer/PHPMailer.php";
-require "PHPMailer/Exception.php";
-session_start();
 
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        header('Location: index.php');
-        exit();
-    }
-
+        header('location: index');
+    } else {
+      include "class.phpmailer.php";
+      include "class.smtp.php";
+      require '../connection.php';
+      session_start();
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr');
@@ -22,23 +20,28 @@ session_start();
 
         // file_put_contents("test.txt", $response);
 
-        if ($response == "VERIFIED") {
+          // $value = "Product Count ".$_POST['item_name'].", Event ID".$_POST['item_number'].", Total ".$_POST['mc_gross'].", Count ".$_POST['quantity'].", Price count ".$_POST['custom'].", Email ".$_POST['payer_email'].", Name ".$_POST['address_name'].", Phone ".$_POST['address_street'].", Payment: ".$_POST['payment_status'];
 
           $_SESSION['product_count'] = $_POST['item_name'];
           $_SESSION['eventid'] = $eventid = $_POST['item_number'];
           $_SESSION['total'] = $total = $_POST['mc_gross'];
-          $_SESSION['count'] = $_POST['quantity'];
+          // $_SESSION['count'] = $_POST['quantity'];
           $_SESSION['price_count'] = $_POST['custom'];
-          $_SESSION['email'] = $email = $_POST['payer_email'];
-          $_SESSION['name'] = $name = $_POST['address_name'];
+          $email = $_POST['payer_email'];
+          // $_SESSION['name'] = $name = $_POST['address_name'];
           $phone = $_POST['address_street'];
           $currency = $_POST['mc_currency'];
           $paymentStatus = $_POST['payment_status'];
+          $unit = explode(",",$_SESSION['price_count']);
+          $_SESSION['count'] = $unit[0];
+          $username = $_SESSION['name'] = $unit[1];
+          $userphone = $unit[2];
+          $useremail = $_SESSION['email'] = $unit[3];
+
 
           // file_put_contents("test.txt", $paymentStatus);
 
         if ($currency=="USD" && $paymentStatus == "Completed") {
-          require '../connection.php';
 
           $timedate = $_POST['payment_date'];
 
@@ -63,7 +66,7 @@ session_start();
             $_SESSION['ticketid'] = $ticketid;
 
            // Storing Ticket Data To the DATABASE
-             $insert ="INSERT INTO tickets (ticket_id,event_id,name,email,phone,ticket_price) VALUES ('$ticketid','$eventid','$name','$email','$phone','$total')";
+             $insert ="INSERT INTO tickets (ticket_id,event_id,name,email,payer_email,phone,ticket_price) VALUES ('$ticketid','$eventid','$username','$useremail','$email','$userphone','$total')";
              if ($mysqli->query($insert)) {
 
             require 'fpdf/fpdf.php';
@@ -105,9 +108,10 @@ session_start();
                        $product_c = explode(",",$_SESSION['product_count']);
                        $unit_p = explode(",",$_SESSION['price_count']);
                        foreach ($product_c as $key => $product) {
+                         $k = $key+4;
                          $category = substr($product, 0, -1);
                          $quantity = substr($product, -1);
-                         $unit_price = $quantity*$unit_p[$key];
+                         $unit_price = $unit_p[$k];
                          $tid = $_SESSION['ticketid'];
                          $eid = $_SESSION['eventid'];
 
@@ -124,21 +128,26 @@ session_start();
                        $filename = "tickets/".$ticketid.".pdf";
                        $pdfname = $ticketid.".pdf";
                        $pdf->Output($filename,"F");
-                       $email = $_SESSION['email'];
-                       $sname = $_SESSION['name'];
 
-                         $mail = new PHPMailer();
-                         $mail->setFrom("no-reply@icmds.org", "Admin");
-                         $mail->addAddress($email, $sname);
-                         $mail->isHTML(true);
-                         $mail->Subject = "ICMDS Event Ticket";
-                         $mail->AddAttachment($filename, $pdfname,  $encoding = 'base64', $type = 'application/pdf');
-                         $mail->Body = "
-                             Thank You! Your Ticket has been generated with Ticket No $ticketid. Your ticket is Attached please bring a print out at the venue.<br><br>
+                       $mail = new PHPMailer();
+                       $mail->isSMTP();
+                       $mail->Host = "icmds.org";
+                       $mail->SMTPAuth= true;
+                       $mail->Username= "tickets@icmds.org";
+                       $mail->Password= "Tickets@123";
+                       $mail->Port =587;
+                       $mail->From="tickets@icmds.org";
+                       $mail->FromName="Admin";
+                       $mail->AddAddress ($useremail);
+                       $mail->IsHTML(true);
+                       $mail->Subject = "ICMDS Event Ticket";
+                       $mail->AddAttachment($filename, $pdfname,  $encoding = 'base64', $type = 'application/pdf');
+                       $mail->Body = "
+                           Thank You! Your Ticket has been generated with Ticket No $ticketid. Your ticket is Attached please bring a print out at the venue.<br><br>
 
-                             Kind regards,
-                             ICMDS
-                         ";
+                           Kind regards,
+                           ICMDS
+                       ";
 
                          $mail->send();
 
@@ -149,8 +158,8 @@ session_start();
             }
         }
 
-       }
 
+     }
 
 
 

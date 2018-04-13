@@ -458,12 +458,6 @@ if (isset($_GET['eventid']) || isset($_POST['adddocbtn'])) {
 
             var image, file;
 
-            var l = this.files.length;
-            if (l>20) {
-              alert('You can\'t choose more than 20 files at a time');
-              $("#file").val('');
-            }
-
             for (var i = this.files.length - 1; i >= 0; i--) {
 
           if ((file = this.files[i])) {

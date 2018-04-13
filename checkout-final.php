@@ -1,9 +1,9 @@
 <?php
 if (isset($_POST['proceed']) && isset($_POST['name']) && isset($_POST['email']) && isset($_POST['phone'])  && isset($_POST['productid'])) {
 
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
+  $username = $_POST['name'];
+  $useremail = $_POST['email'];
+  $userphone = $_POST['phone'];
 
 
   if ($_POST['productid']==1) {
@@ -200,10 +200,8 @@ if (isset($_POST['proceed']) && isset($_POST['name']) && isset($_POST['email']) 
           <input type="hidden" name="item_name" value="<?php echo $name;?>">
           <input type="hidden" name="item_number" value="<?php echo $_POST['productid'];?>">
           <input type="hidden" name="amount" value="<?php echo $price;?>">
+          <input type="hidden" name="custom" value="<?php echo $username.",".$userphone.",".$useremail;?>">
           <input type="hidden" name="currency_code" value="USD">
-          <input type="hidden" name="first_name" value="<?php echo $name;?>">
-          <input type="hidden" name="payer_email" value="<?php echo $email;?>">
-          <input type="hidden" name="address_street" value="<?php echo $phone?>">
           <input type="hidden" name="button_subtype" value="services">
           <input type="hidden" name="no_note" value="1">
           <input type="hidden" name="no_shipping" value="1">

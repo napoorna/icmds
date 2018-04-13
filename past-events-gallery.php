@@ -125,7 +125,7 @@
                         <div class="grid-layout grid-2-columns" data-margin="20" data-item="grid-item" data-lightbox="gallery">
                           <?php while ($row = mysqli_fetch_assoc($qry)) { ?>
                             <div class="grid-item">
-                                    <a class="image-hover-zoom" href="image/<?php echo $row['docs'];?>" data-lightbox="gallery-item"><img src="image/<?php echo $row['docs'];?>"></a>
+                                    <a class="image-hover-zoom" href="icmds/db/images/<?php echo $row['docs'];?>" data-lightbox="gallery-item"><img src="icmds/db/images/<?php echo $row['docs'];?>"></a>
                             </div>
                           <?php } ?>
                         </div>

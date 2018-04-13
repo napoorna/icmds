@@ -334,10 +334,10 @@ if (isset($_SESSION['icmds_login'])) {
                         <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Contact</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Contact</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                               <tbody>

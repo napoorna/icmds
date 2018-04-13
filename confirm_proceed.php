@@ -244,20 +244,36 @@ if (isset($_POST['name'])) {
         </form>
           <br>
           <center>
-            <!-- <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top"> -->
-            <form action="check" method="GET" >
+
+            <!-- <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="JAMS8JB5MZ7DE">
+            <input type="hidden" name="lc" value="IN">
+            <input type="hidden" name="item_name" value="ItemName">
+            <input type="hidden" name="item_number" value="ItemID">
+            <input type="hidden" name="amount" value="0.01">
+            <input type="hidden" name="currency_code" value="USD">
+            <input type="hidden" name="button_subtype" value="services">
+            <input type="hidden" name="no_note" value="1">
+            <input type="hidden" name="no_shipping" value="1">
+            <input type="hidden" name="rm" value="1">
+            <input type="hidden" name="return" value="http://icmds.org/order-confirm">
+            <input type="hidden" name="cancel_return" value="http://icmds.org/ticket">
+            <input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
+            <input type="hidden" name="notify_url" value="https://www.mywebsite.com/example_usage_advanced.php">
+            <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+            </form> -->
+
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input type="hidden" name="cmd" value="_xclick">
             <input type="hidden" name="business" value="XMP3UCFKRCQ52">
             <input type="hidden" name="lc" value="US">
             <input type="hidden" name="item_name" value="<?php echo $product_count; ?>">
             <input type="hidden" name="item_number" value="<?php echo $eventid; ?>">
-            <input type="hidden" name="mc_gross" value="<?php echo $final;?>">
+            <input type="hidden" name="amount" value="<?php echo $final; ?>">
+            <input type="hidden" name="custom" value="<?php echo $count.",".$name.",".$phone.",".$email.",".$price_count;?>">
             <input type="hidden" name="currency_code" value="USD">
-            <input type="hidden" name="address_name" value="<?php echo $name;?>">
-            <input type="hidden" name="payer_email" value="<?php echo $email;?>">
-            <input type="hidden" name="address_street" value="<?php echo $phone;?>">
-            <input type="hidden" name="quantity" value="<?php echo $count;?>">
-            <input type="hidden" name="custom" value="<?php echo $price_count;?>">
             <input type="hidden" name="button_subtype" value="services">
             <input type="hidden" name="no_note" value="1">
             <input type="hidden" name="no_shipping" value="1">
@@ -266,8 +282,9 @@ if (isset($_POST['name'])) {
             <input type="hidden" name="cancel_return" value="http://icmds.org/ticket">
             <input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynowCC_LG.gif:NonHosted">
             <input type="hidden" name="notify_url" value="http://icmds.org/mail/listener_ticket.php">
-            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            <!-- <input type="hidden" name="notify_url" value="http://onclavesystems.com/demo/paypalipn/example_usage_advanced.php"> -->
+            <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
             </form>
 
           </center>

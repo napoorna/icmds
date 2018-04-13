@@ -350,7 +350,7 @@ require_once 'connection.php';
 
                             ?>
                             <div class="body">
-                                <form id="form_validation" method="POST" action="event_category_process">
+                                <form id="form_validation" method="POST" enctype="multipart/form-data" action="event_category_process">
                                     <div class="col-sm-12">
                                       <div class="col-sm-6">
                                         <div class="form-group form-float">
@@ -402,7 +402,7 @@ require_once 'connection.php';
                                         <div class="col-sm-6">
                                           <div class="form-group form-float">
                                               <div class="form-line">
-                                                <input type="number" class="form-control" name="event_category" min="1" required>
+                                                <input type="number" class="form-control" name="event_category" id="event_category" onchange="check();" required>
                                                 <label class="form-label">No of Ticket Categories</label>
                                               </div>
                                           </div>
@@ -411,7 +411,7 @@ require_once 'connection.php';
                                           <div class="col-sm-8">
                                             <div class="demo-switch-title">Set Discount Percentage for Members</div>
                                             <div class="switch">
-                                                <center><label><input type="checkbox" onchange="alertme();"><span class="lever switch-col-indigo"></span></label></center>
+                                                <center><label><input type="checkbox" id="dis" onchange="alertme();"><span class="lever switch-col-indigo"></span></label></center>
                                             </div>
                                           </div>
                                           <div class="col-sm-4" id="percent" style="display: none;">
@@ -423,6 +423,9 @@ require_once 'connection.php';
                                             </div>
                                           </div>
                                         </div>
+                                      </div>
+                                      <div class="col-sm-12">
+                                        <input type="file" name="files[]" id="file">
                                       </div>
                                     <center><button class="btn btn-primary waves-effect" type="submit" name="addeventbtn">SUBMIT</button></center>
                                 </form>
@@ -487,7 +490,47 @@ require_once 'connection.php';
           document.getElementById('event_endtime').disabled = false;
         }
       }
+
+      function check(){
+        var val = document.getElementById('event_category').value;
+        if (val == 0) {
+          document.getElementById('dis').disabled = true;
+        } else {
+          document.getElementById('dis').disabled = false;
+        }
+      }
     </script>
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+
+    var _URL = window.URL || window.webkitURL;
+        $("#file").change(function(e) {
+
+            var image, file;
+
+            // for (var i = this.files.length - 1; i >= 0; i--) {
+
+          file = this.files[0]
+
+              image = new Image();
+              var fileType = file["type"];
+              var ValidImageTypes = ["image/jpg", "image/jpeg", "image/png"];
+              if ($.inArray(fileType, ValidImageTypes) < 0) {
+                   // invalid file type code goes here.
+                   alert('File Format Not Supported, File must be in jpg, jpeg or png Format');
+                   $("#file").val('');
+              }
+
+                image.src = _URL.createObjectURL(file);
+
+
+        });
+      });
+    </script>
+
 </body>
 
 </html>

@@ -403,7 +403,7 @@ if (isset($_SESSION['icmds_login'])) {
                               </tr>
                           </thead>
                             <tbody>
-                              <?php $sql = $mysqli->query("SELECT * FROM admin WHERE designation !='super_admin'");
+                              <?php $sql = $mysqli->query("SELECT * FROM admin WHERE designation !='admin'");
                                 while ($row = mysqli_fetch_assoc($sql)) { ?>
                                 <tr>
                                   <td class="text-center"><?php echo $row['name'];?></td>

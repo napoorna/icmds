@@ -6,10 +6,14 @@ if (isset($_POST['eventid'])) {
   $sql = $mysqli->query("SELECT SUM(seat) as total FROM event_ticket_category_map WHERE event_id='$eventid'");
   $res = $sql->fetch_assoc();
   $total = $res['total'];
+  // echo $total;
 
   $qry = $mysqli->query("SELECT SUM(seat) AS sum FROM ticket_category_map WHERE event_id='$eventid'");
   $row = $qry->fetch_assoc();
   $booked = $row['sum'];
+  if ($booked=="") {
+    $booked = 0;
+  }
 
   if ($total>$booked) {
     echo "success";

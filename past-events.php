@@ -1,5 +1,7 @@
 <?php
  require 'connection.php';
+ $date = date("Y-m-d H:i");
+ $current_time = strtotime(date("Y-m-d H:i", strtotime($date . "-30 minutes")));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -112,16 +114,17 @@
 
                     <?php
                     $sql = $mysqli->query("SELECT * FROM event");
-                    if ($sql->num_rows == 0) { ?>
-                      <div class="text-center">
-                        Currently No Past Events are There
-                      </div>
-                    <?php
-                    }
+
+                    $change1 = 0;
                     while ($row = mysqli_fetch_assoc($sql)) {
                       $eventid = $row['event_id'];
-                      $qry = $mysqli->query("SELECT docs FROM eventdocs WHERE event_id='$eventid'");
-                        $row1 = $qry->fetch_assoc();
+                      $result1 = explode(" ", $row['start_time'], 6);
+                      $date1 = $result1[1];$month1 = $result1[2];$year1 = $result1[3];$day1 = $result1[0]; $display1 = $date1.' '.$month1.' '.$year1.' '.$day1; $time1 = $result1[5];
+                      $nmonth1 = date('m',strtotime($month1));
+                      $check1 = strtotime($year1.'-'.$nmonth1.'-'.$date1.' '.$time1);
+                      if ($check1<=$current_time) {
+                        $qry = $mysqli->query("SELECT docs FROM eventdocs WHERE event_id='$eventid'");
+                        $change1 = 1;
                     ?>
 
                     <!-- Post item-->
@@ -149,9 +152,12 @@
                     </div>
                     <!-- end: Post item-->
                     <?php
-
+                      }
                     }
-                    ?>
+                    if ($change1==0) {
+                     ?>
+                     <h5 class="text-center">Currently No Past Events are There, Check later For Future Updates and Events</h5>
+                   <?php } ?>
 
                 </div>
                 <!-- end: Blog -->

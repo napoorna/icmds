@@ -421,6 +421,7 @@ if (isset($_GET['eventid'])) {
                                               <th>Email</th>
                                               <th>Contact</th>
                                               <th>Total Price</th>
+                                              <th>Action</th>
                                               <th>Ticket</th>
                                           </tr>
                                       </thead>
@@ -433,6 +434,7 @@ if (isset($_GET['eventid'])) {
                                               <td class="text-center"><?php echo $rew['email'];?></td>
                                               <td class="text-center"><?php echo $rew['phone'];?></td>
                                               <td class="text-center"><?php echo $rew['ticket_price'];?></td>
+                                              <td class="text-center"><a href="ticket_pdf?ticketid=<?php echo $rew['ticket_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">Download</button></a></td>
                                               <td class="text-center"><a href="view_ticket?eventid=<?php echo $rew['event_id'];?>&ticketid=<?php echo $rew['ticket_id'];?>"><button type="button" class="btn btn-success waves-effect" name="button">View</button></a></td>
                                             </tr>
                                             <?php } ?>

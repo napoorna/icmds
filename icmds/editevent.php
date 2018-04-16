@@ -80,7 +80,7 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
   $result = explode(" ", $starttime, 6);
   $date = $result[1];$month = $result[2];$year = $result[3];
   $check = strtotime($date.' '.$month.' '.$year);
-  $current = strtotime(date('d F Y'));
+  $current = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours")));
   if ($check<=$current) {
     echo '<script type="text/javascript">';
     echo 'alert("You Can\'t Edit a Past Event");';

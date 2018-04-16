@@ -331,15 +331,15 @@ if (isset($_SESSION['icmds_login'])) {
                         <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                             <thead>
                                 <tr>
-                                    <th>Event ID</th>
-                                    <th>E.Name</th>
-                                    <th>E.Venue</th>
-                                    <th>Start Time</th>
-                                    <th>Status</th>
-                                    <th>Month</th>
-                                    <th>Year</th>
-                                    <th>Edit</th>
-                                    <th>view</th>
+                                    <th class="text-center">Event ID</th>
+                                    <th class="text-center">E.Name</th>
+                                    <th class="text-center">E.Venue</th>
+                                    <th class="text-center">Start Time</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Edit</th>
+                                    <th class="text-center">Month</th>
+                                    <th class="text-center">Year</th>
+                                    <th class="text-center">view</th>
                                 </tr>
                             </thead>
                               <tbody>
@@ -358,13 +358,14 @@ if (isset($_SESSION['icmds_login'])) {
                                     $year = $result[3];
                                     // $check = $date.' '.$month.' '.$year;
                                     $check = strtotime($date.' '.$month.' '.$year);
-                                    $current = strtotime(date('d F Y'));
+                                    // $current = strtotime(date('d F Y'));
+                                    $current = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours")));
                                     if ($check>$current): ?>
                                     <td class="text-center" style="color:green;">Upcoming</td>
                                     <td><a href="editevent?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">Edit Event</button></a></td>
                                     <?php else: ?>
                                     <td class="text-center" style="color:red;">Past</td>
-                                    <td><a href="addeventdoc?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn bg-purple waves-effect" name="button">Add Files</button></a></td>
+                                    <td><a href="addeventdoc?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn bg-purple waves-effect" name="button">Add Photos</button></a></td>
                                     <?php endif; ?>
                                     <td><?php echo $row['month'];?></td>
                                     <td><?php echo $row['year'];?></td>

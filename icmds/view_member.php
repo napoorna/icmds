@@ -380,15 +380,34 @@ if (isset($_GET['userid'])) {
                                   <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                                       <thead>
                                           <tr>
-                                              <th>Subscription ID</th>
-                                              <th>Level</th>
-                                              <th>Start Date</th>
-                                              <th>Finish Date</th>
+                                              <th class="text-center">Subscription ID</th>
+                                              <th class="text-center">Level</th>
+                                              <th class="text-center">Price</th>
+                                              <th class="text-center">Start Date</th>
+                                              <th class="text-center">Finish Date</th>
                                           </tr>
                                       </thead>
                                         <tbody>
                                           <?php $sql = $mysqli->query("SELECT * FROM users u INNER JOIN member m ON m.user_id=u.user_id AND u.user_id='$userid'");
                                             while ($rew = mysqli_fetch_assoc($sql)) {
+                                              switch ($rew['level']) {
+                                                case 'Patron Family Members': $price = "$250";
+                                                                              break;
+                                                case 'Extended Family membership': $price = "$180";
+                                                                              break;
+                                                case 'Full-Society Family Members': $price = "$150";
+                                                                              break;
+                                                case 'Senior Family Members': $price = "$100";
+                                                                              break;
+                                                case 'Patron Individual Members': $price = "$125";
+                                                                              break;
+                                                case 'Individual Members': $price = "$75";
+                                                                              break;
+                                                case 'Student / Senior Citizen': $price = "$50";
+                                                                              break;
+                                                case 'Premier Membership': $price = "$1000";
+                                                                              break;
+                                              }
 
                                               $unit_s = explode("-",$rew['start_date']);
                                               $unit_f = explode("-",$rew['end_date']);
@@ -399,6 +418,7 @@ if (isset($_GET['userid'])) {
                                             <tr>
                                               <td class="text-center"><?php echo $rew['membership_id'];?></td>
                                               <td class="text-center"><?php echo $rew['level'];?></td>
+                                              <td class="text-center"><?php echo $price;?></td>
                                               <td class="text-center"><?php echo $month_s."-".$day_s."-".$year_s;?></td>
                                               <td class="text-center"><?php echo $month_f."-".$day_f."-".$year_f;?></td>
                                             </tr>

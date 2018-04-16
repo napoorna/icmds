@@ -22,7 +22,7 @@ if (isset($_POST['email']) && isset($_POST['mid']) && isset($_POST['total']) && 
           if ($row['memid'] == $mid) {
 
               $expire = $row['medate'];
-              $today = time();
+              $today = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours")));
 
               $expire_dt = new DateTime($expire." 23:59");
               $expire = $expire_dt->getTimestamp();

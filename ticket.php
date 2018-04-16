@@ -3,7 +3,7 @@ session_start();
   // $current_time = strtotime(date('l d F Y H:m'));
   // $current_time -= 1800;
   $date = date("Y-m-d H:i");
-  $current_time = strtotime(date("Y-m-d H:i", strtotime($date . "-30 minutes")));
+  $current_time = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours -30 minutes")));
 
 
 ?>
@@ -115,6 +115,54 @@ session_start();
 <!-- Section -->
 <section>
   <div class="container">
+    <div class="heading heading-center">
+      <h3>BUY TICKETS</h3>
+          <div class="hr-title hr-long center"><abbr>BUY TICKETS TO OUR EVENTS</abbr> </div>
+      <!-- Blog -->
+      <div id="blog" class="grid-layout post-3-columns m-b-30" data-item="post-item">
+
+        <?php
+        $sql1 = $mysqli->query("SELECT * FROM event WHERE status='1'");
+        $change1 = 0;
+        while ($row1 = mysqli_fetch_assoc($sql1)) {
+          $eventid1 = $row1['event_id'];
+          $result1 = explode(" ", $row1['start_time'], 6);
+          $date1 = $result1[1];$month1 = $result1[2];$year1 = $result1[3];$day1 = $result1[0]; $display1 = $date1.' '.$month1.' '.$year1.' '.$day1; $time1 = $result1[5];
+          $nmonth1 = date('m',strtotime($month1));
+          $check1 = strtotime($year1.'-'.$nmonth1.'-'.$date1.' '.$time1);
+          if ($check1>$current_time) {
+            $change1 = 1;
+            $_SESSION[$row1['event_id']]=1;
+        ?>
+
+          <!-- Post item-->
+          <div class="post-item border">
+              <div class="post-item-wrap">
+                  <div class="post-image">
+                        <img alt="No Image" height="350px" src="icmds/db/images/<?php echo $row1['cover'];?>">
+                  </div>
+                  <div class="post-item-description">
+                      <span class="post-meta-date"><i class="fa fa-calendar-o"></i><?php echo $row1['start_time']?></span>
+
+                      <h2><?php echo $row1['event_name']?></h2>
+                      <p><?php echo $row1['event_description']?></p>
+                      <button class="btn btn-success" onclick="check(<?php echo $row1['event_id'];?>);">BUY NOW</button>
+
+                  </div>
+              </div>
+          </div>
+          <!-- end: Post item-->
+          <?php
+            }
+          }
+          if ($change1==0) {
+           ?>
+           <h5 class="text-center">Currently No Upcoming Events are There, Check later For Future Updates and Events</h5>
+         <?php } ?>
+
+      </div>
+      <!-- end: Blog -->
+    </div>
 
     <div class="heading heading-center">
     	<h3>OPEN EVENTS</h3>
@@ -166,54 +214,6 @@ session_start();
       <!-- end: Blog -->
     </div>
 
-    <div class="heading heading-center">
-      <h3>BUY TICKETS</h3>
-          <div class="hr-title hr-long center"><abbr>BUY TICKETS TO OUR EVENTS</abbr> </div>
-      <!-- Blog -->
-      <div id="blog" class="grid-layout post-3-columns m-b-30" data-item="post-item">
-
-        <?php
-        $sql1 = $mysqli->query("SELECT * FROM event WHERE status='1'");
-        $change1 = 0;
-        while ($row1 = mysqli_fetch_assoc($sql1)) {
-          $eventid1 = $row1['event_id'];
-          $result1 = explode(" ", $row1['start_time'], 6);
-          $date1 = $result1[1];$month1 = $result1[2];$year1 = $result1[3];$day1 = $result1[0]; $display1 = $date1.' '.$month1.' '.$year1.' '.$day1; $time1 = $result1[5];
-          $nmonth1 = date('m',strtotime($month1));
-          $check1 = strtotime($year1.'-'.$nmonth1.'-'.$date1.' '.$time1);
-          if ($check1>$current_time) {
-            $change1 = 1;
-            $_SESSION[$row1['event_id']]=1;
-        ?>
-
-          <!-- Post item-->
-          <div class="post-item border">
-              <div class="post-item-wrap">
-                  <div class="post-image">
-                        <img alt="No Image" height="350px" src="icmds/db/images/<?php echo $row1['cover'];?>">
-                  </div>
-                  <div class="post-item-description">
-                      <span class="post-meta-date"><i class="fa fa-calendar-o"></i><?php echo $row1['start_time']?></span>
-
-                      <h2><?php echo $row1['event_name']?></h2>
-                      <p><?php echo $row1['event_description']?></p>
-                      <button class="btn btn-success" onclick="check(<?php echo $row1['event_id'];?>);">BUY NOW</button>
-
-                  </div>
-              </div>
-          </div>
-          <!-- end: Post item-->
-          <?php
-            }
-          }
-          if ($change1==0) {
-           ?>
-           <h5 class="text-center">Currently No Upcoming Events are There, Check later For Future Updates and Events</h5>
-         <?php } ?>
-
-      </div>
-      <!-- end: Blog -->
-    </div>
     </div>
 </section>
 <!-- end: Section -->

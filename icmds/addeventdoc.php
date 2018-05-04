@@ -18,9 +18,9 @@ if (isset($_GET['eventid']) || isset($_POST['adddocbtn'])) {
 
     $starttime = $row['start_time'];
     $result = explode(" ", $starttime, 6);
-    $date = $result[1];$month = $result[2];$year = $result[3];
-    $check = strtotime($date.' '.$month.' '.$year);
-    $current = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours")));
+    $date = $result[1];$month = $result[2];$year = $result[3];$time = $result[5];
+    $check = strtotime($date.' '.$month.' '.$year.' '.$time);
+    $current = strtotime(date("Y-m-d H:i", strtotime("-5 hours")));
     if ($check>$current) {
       echo '<script type="text/javascript">';
       echo 'alert("You Can\'t add documents to a Upcoming Event");';

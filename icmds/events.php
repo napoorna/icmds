@@ -356,10 +356,11 @@ if (isset($_SESSION['icmds_login'])) {
                                     $date = $result[1];
                                     $month = $result[2];
                                     $year = $result[3];
+                                    $time = $result[5];
                                     // $check = $date.' '.$month.' '.$year;
-                                    $check = strtotime($date.' '.$month.' '.$year);
+                                    $check = strtotime($date.' '.$month.' '.$year.' '.$time);
                                     // $current = strtotime(date('d F Y'));
-                                    $current = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours")));
+                                    $current = strtotime(date("Y-m-d H:i", strtotime("-5 hours")));
                                     if ($check>$current): ?>
                                     <td class="text-center" style="color:green;">Upcoming</td>
                                     <td><a href="editevent?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">Edit Event</button></a></td>

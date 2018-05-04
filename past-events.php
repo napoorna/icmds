@@ -1,14 +1,15 @@
 <?php
  require 'connection.php';
- $date = date("Y-m-d H:i");
- $current_time = strtotime(date("Y-m-d H:i", strtotime($date . "-5 hours -30 minutes")));
+ $current_time = strtotime(date("Y-m-d H:i", strtotime("-5 hours -30 minutes")));
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
  <head> <meta name="viewport" content="width=device-width, initial-scale=1" /> <meta http-equiv="content-type" content="text/html; charset=utf-8" />
      <!-- Document title -->
-     <title>Past Events | ICMDS</title> <!-- Stylesheets & Fonts --> <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,800,700,600|Montserrat:400,500,600,700|Raleway:100,300,600,700,800" rel="stylesheet" type="text/css" /> <link href="css/plugins.css" rel="stylesheet"> <link href="css/style.css" rel="stylesheet"> <link href="css/responsive.css" rel="stylesheet"> </head>
+     <title>Past Events | ICMDS</title> <!-- Stylesheets & Fonts --> <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,800,700,600|Montserrat:400,500,600,700|Raleway:100,300,600,700,800" rel="stylesheet" type="text/css" /> <link href="css/plugins.css" rel="stylesheet"> <link href="css/style.css" rel="stylesheet"> <link href="css/responsive.css" rel="stylesheet">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
 
 <body>	<!-- Wrapper -->
 	<div id="wrapper">
@@ -197,110 +198,112 @@
 
                         <!-- Gallery -->
                         <div class="grid-layout grid-3-columns" data-margin="20" data-item="grid-item" data-lightbox="gallery">
-                            <div class="grid-item">
+                            <div id="1" class="grid-item">
                                     <a class="image-hover-zoom" href="icmds_images/aishwarya-1024x683.jpg" data-lightbox="gallery-item"><img src="icmds_images/aishwarya-1024x683.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="2" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/AjoyChakrabarty_SwatiSangeethotsavam.jpg" data-lightbox="gallery-item"><img src="icmds_images/AjoyChakrabarty_SwatiSangeethotsavam.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="3" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Amjad_Ali_Khan_and_Sons.jpg" data-lightbox="gallery-item"><img src="icmds_images/Amjad_Ali_Khan_and_Sons.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="4" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/anoushka_face_3.jpg" data-lightbox="gallery-item"><img src="icmds_images/anoushka_face_3.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="5" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Ashwini_Bhide.jpg" data-lightbox="gallery-item"><img src="icmds_images/Ashwini_Bhide.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="6" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/August_27th.jpg" data-lightbox="gallery-item"><img src="icmds_images/August_27th.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="7" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Birju_Maharaj.jpg" data-lightbox="gallery-item"><img src="icmds_images/Birju_Maharaj.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="8" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Carnatic_Hindustani_Jugalbandi1.jpg" data-lightbox="gallery-item"><img src="icmds_images/Carnatic_Hindustani_Jugalbandi1.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="9" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/carnatic-brothers.jpg" data-lightbox="gallery-item"><img src="icmds_images/carnatic-brothers.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="10" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Hema_Malini_Durga.jpg" data-lightbox="gallery-item"><img src="icmds_images/Hema_Malini_Durga.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="11" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Hindol-1024x576.jpg" data-lightbox="gallery-item"><img src="icmds_images/Hindol-1024x576.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="12" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/June17th-pdf-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/June17th-pdf-791x1024.jpg"></a>
                             </div>
-                            <div class="grid-item">
-                                <a class="image-hover-zoom" href="icmds_images/LocalTalentEntryForm20162-page-001-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/LocalTalentEntryForm20162-page-001-791x1024.jpg"></a>
-                            </div>
-                            <div class="grid-item">
+                            <div id="13" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/LocalTalentFlyer032517-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/LocalTalentFlyer032517-791x1024.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="14" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/May13flyer-pdf-663x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/May13flyer-pdf-663x1024.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="15" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/M-Balachandra-Prabhu.jpg" data-lightbox="gallery-item"><img src="icmds_images/M-Balachandra-Prabhu.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="16" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/MilindRaikar-1.jpg" data-lightbox="gallery-item"><img src="icmds_images/MilindRaikar-1.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="17" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/PARTHAS-CONCERT-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/PARTHAS-CONCERT-791x1024.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="18" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/PtAjay.jpg" data-lightbox="gallery-item"><img src="icmds_images/PtAjay.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="19" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Rakesh-Chourasia.jpg" data-lightbox="gallery-item"><img src="icmds_images/Rakesh-Chourasia.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="20" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Sangeet-Symphony.jpg" data-lightbox="gallery-item"><img src="icmds_images/Sangeet-Symphony.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="21" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/sangeetsymphony2017-pdf-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/sangeetsymphony2017-pdf-791x1024.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="23" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Sanhita-768x576.jpg" data-lightbox="gallery-item"><img src="icmds_images/Sanhita-768x576.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="24" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Sitar--768x576.jpg" data-lightbox="gallery-item"><img src="icmds_images/Sitar--768x576.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="25" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Slide1-1-768x576.jpg" data-lightbox="gallery-item"><img src="icmds_images/Slide1-1-768x576.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="26" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Slide1-768x576.jpg" data-lightbox="gallery-item"><img src="icmds_images/Slide1-768x576.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="27" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Subbulakshmi.jpg" data-lightbox="gallery-item"><img src="icmds_images/Subbulakshmi.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="28" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Sumitra-Guha-1.jpg" data-lightbox="gallery-item"><img src="icmds_images/Sumitra-Guha-1.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="29" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Sumitra-Guha3.jpg" data-lightbox="gallery-item"><img src="icmds_images/Sumitra-Guha3.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="30" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/thLIY4EVA6.jpg" data-lightbox="gallery-item"><img src="icmds_images/thLIY4EVA6.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="31" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/zakir_hussain_icmds_2014.jpg" data-lightbox="gallery-item"><img src="icmds_images/zakir_hussain_icmds_2014.jpg"></a>
                             </div>
-                            <div class="grid-item">
+                            <div id="32" class="grid-item">
                                 <a class="image-hover-zoom" href="icmds_images/Zakir_Rakesh_duke.jpg" data-lightbox="gallery-item"><img src="icmds_images/Zakir_Rakesh_duke.jpg"></a>
+                            </div>
+                            <div id="33" class="grid-item">
+                                <a class="image-hover-zoom" href="icmds_images/LocalTalentEntryForm20162-page-001-791x1024.jpg" data-lightbox="gallery-item"><img src="icmds_images/LocalTalentEntryForm20162-page-001-791x1024.jpg"></a>
                             </div>
                         </div>
                         <!-- end: Gallery -->
-
-
-
             </div>
+
         </section>
 
+
+        <!-- <div class="text-center">
+          <button type="button" name="button" class="btn btn-primary" onclick="loadmore();">Load More</button>
+        </div> -->
 
         <!-- end: Content -->
         <!-- Footer -->
@@ -415,6 +418,7 @@
 
 <!--Template functions-->
  <script src="js/functions.js"></script>
+
 
 </body>
 

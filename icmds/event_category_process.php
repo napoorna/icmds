@@ -131,8 +131,8 @@ if (isset($_POST['addeventbtn']) || isset($_POST['btneventcategory']) || (isset(
 
     $starttime = $row['start_time'];
     $result = explode(" ", $starttime, 6);
-    $date = $result[1];$month = $result[2];$year = $result[3];
-    $check = strtotime($date.' '.$month.' '.$year);
+    $date = $result[1];$month = $result[2];$year = $result[3];$time = $result[5];
+    $check = strtotime($date.' '.$month.' '.$year.' '.$time);
     $current = strtotime(date('d F Y'));
     if ($check<=$current) {
       echo '<script type="text/javascript">';

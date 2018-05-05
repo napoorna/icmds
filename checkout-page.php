@@ -2,7 +2,7 @@
 if (isset($_GET['productid'])) {
 if ($_GET['productid']==1 ||$_GET['productid']==2 ||$_GET['productid']==3 ||$_GET['productid']==4 ||$_GET['productid']==5 ||$_GET['productid']==6 ||$_GET['productid']==7 ||$_GET['productid']==8) {
   if ($_GET['productid']==1) {
-      $name = "Patron Family Members"; $price = "250.00"; $validity = "1 Day";
+      $name = "Patron Family Members"; $price = "250.00"; $validity = "1 Year";
   } elseif ($_GET['productid']==2) {
       $name = "Extended Family membership"; $price = "180.00"; $validity = "1 Year";
   } elseif ($_GET['productid']==3) {
@@ -25,7 +25,7 @@ if ($_GET['productid']==1 ||$_GET['productid']==2 ||$_GET['productid']==3 ||$_GE
 
  <head> <meta name="viewport" content="width=device-width, initial-scale=1" /> <meta http-equiv="content-type" content="text/html; charset=utf-8" />
      <!-- Document title -->
-     <title>About Us | ICMDS</title> <!-- Stylesheets & Fonts --> <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,800,700,600|Montserrat:400,500,600,700|Raleway:100,300,600,700,800" rel="stylesheet" type="text/css" /> <link href="css/plugins.css" rel="stylesheet"> <link href="css/style.css" rel="stylesheet"> <link href="css/responsive.css" rel="stylesheet"> </head>
+     <title>Checkout | ICMDS</title> <!-- Stylesheets & Fonts --> <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,800,700,600|Montserrat:400,500,600,700|Raleway:100,300,600,700,800" rel="stylesheet" type="text/css" /> <link href="css/plugins.css" rel="stylesheet"> <link href="css/style.css" rel="stylesheet"> <link href="css/responsive.css" rel="stylesheet"> </head>
 
 <body>	<!-- Wrapper -->
 	<div id="wrapper">

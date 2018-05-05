@@ -34,6 +34,7 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
     <link href="css/themes/all-themes.css" rel="stylesheet" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 </head>
 
 <body class="theme-red">
@@ -93,6 +94,9 @@ if (isset($_SESSION['icmds_login'])) {
                     <div class="btn-group user-helper-dropdown">
                         <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                         <ul class="dropdown-menu pull-right">
+                          <?php if ($_SESSION['logged_tag'] == "admin"): ?>
+                            <li><a href="profile"><i class="material-icons">person</i>Profile</a></li>
+                          <?php endif; ?>
                             <li><a href="logout"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
                     </div>
@@ -336,6 +340,7 @@ if (isset($_SESSION['icmds_login'])) {
                                     <th>E.Venue</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
+                                    <th>Status</th>
                                     <th>Edit</th>
                                 </tr>
                             </thead>
@@ -348,6 +353,11 @@ if (isset($_SESSION['icmds_login'])) {
                                     <td><?php echo $row['event_venue'];?></td>
                                     <td><?php echo $row['start_time'];?></td>
                                     <td><?php echo $row['end_time'];?></td>
+                                    <?php if ($row['active']==1): ?>
+                                    <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-success waves-effect" name="button">Active</button></td>
+                                    <?php else: ?>
+                                    <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-danger waves-effect" name="button">Deactive</button></td>
+                                    <?php endif; ?>
                                     <td><a href="editcevent?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">Edit Event</button></a></td>
                                   </tr>
                                   <?php } ?>
@@ -395,6 +405,32 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Demo Js -->
     <script src="js/demo.js"></script>
+
+    <script type="text/javascript">
+      function change(eventid){
+
+        var dataString = 'eventid='+ eventid + '&track=cevent';
+        // alert(dataString);
+        jQuery.ajax({
+        url: "db/change.php",
+        data: dataString,
+        type: "POST",
+        success:function(data){
+          alert(data);
+          window.location.href="cevents";
+          // var n = data.length;
+          // if (n==2) {
+          //     var totalval = total.substring(12);
+          //     final = (parseFloat(totalval,10) - (parseFloat(totalval,10)*parseFloat(data,10)/100)).toFixed(2);
+          //     document.getElementById('disc').innerHTML = "Membership discount: "+data+"%";
+          //     document.getElementById('final').innerHTML = "Final Fare $"+final;
+          // } else {
+          //   alert(data);
+          // }
+        }
+        });
+      }
+    </script>
 </body>
 
 </html>

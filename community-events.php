@@ -111,7 +111,7 @@
                 <div id="blog" class="grid-layout post-3-columns m-b-30" data-item="post-item">
 
                   <?php
-                  $sql = $mysqli->query("SELECT * FROM cevent");
+                  $sql = $mysqli->query("SELECT * FROM cevent WHERE active='1'");
                   if ($sql->num_rows == 0) { ?>
                     <div class="text-center">
                       <h5>Currently No Community Events are There</h5>

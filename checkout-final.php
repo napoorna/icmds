@@ -7,7 +7,7 @@ if (isset($_POST['proceed']) && isset($_POST['name']) && isset($_POST['email']) 
 
 
   if ($_POST['productid']==1) {
-      $name = "Patron Family Members"; $price = "250.00"; $validity = "1 Day";
+      $name = "Patron Family Members"; $price = "250.00"; $validity = "1 Year";
   } elseif ($_POST['productid']==2) {
       $name = "Extended Family membership"; $price = "180.00"; $validity = "1 Year";
   } elseif ($_POST['productid']==3) {

@@ -32,6 +32,20 @@ if (isset($_SESSION['icmds_login'])) {
     }
   }
 
+  if (isset($_GET['adminid']) && isset($_GET['remove'])) {
+    $adminid = $mysqli->real_escape_string($_GET['adminid']);
+    if ($_GET['remove']==true) {
+      echo '<script language="javascript">';
+      echo 'if(confirm("Confirm Remove ?") == true) {';
+      echo 'window.location.href = "db/remove?aid='.$adminid.'"';
+      echo '}else{';
+      echo 'window.location.href = "admins"';
+      echo '}';
+      echo '</script>';
+
+    }
+  }
+
 ?>
 ﻿<!DOCTYPE html>
 <html>
@@ -123,6 +137,9 @@ if (isset($_SESSION['icmds_login'])) {
                     <div class="btn-group user-helper-dropdown">
                         <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                         <ul class="dropdown-menu pull-right">
+                          <?php if ($_SESSION['logged_tag'] == "admin"): ?>
+                            <li><a href="profile"><i class="material-icons">person</i>Profile</a></li>
+                          <?php endif; ?>
                             <li><a href="logout"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
                     </div>
@@ -397,9 +414,10 @@ if (isset($_SESSION['icmds_login'])) {
                       <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                           <thead>
                               <tr>
-                                  <th>Name</th>
-                                  <th>Email</th>
-                                  <th>Action</th>
+                                  <th class="text-center">Name</th>
+                                  <th class="text-center">Email</th>
+                                  <th class="text-center">Details</th>
+                                  <th class="text-center">Account</th>
                               </tr>
                           </thead>
                             <tbody>
@@ -408,7 +426,8 @@ if (isset($_SESSION['icmds_login'])) {
                                 <tr>
                                   <td class="text-center"><?php echo $row['name'];?></td>
                                   <td class="text-center"><?php echo $row['email'];?></td>
-                                  <td class="text-center"><a href="edit_admin?adminid=<?php echo $row['id'];?>&email=<?php echo $row['email'];?>"><button type="button" class="btn btn-primary" name="button">Update Details</button></a></td>
+                                  <td class="text-center"><a href="edit_admin?adminid=<?php echo $row['id'];?>&email=<?php echo $row['email'];?>"><button type="button" class="btn btn-primary" name="button">Update</button></a></td>
+                                  <td class="text-center"><a href="admins?adminid=<?php echo $row['id'];?>&remove=true"><button type="button" class="btn btn-danger" name="button">Remove</button></a></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>

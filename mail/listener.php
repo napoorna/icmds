@@ -68,7 +68,8 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y'); //date('d-m-Y', strtotime(' +1 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y'); //date('d-m-Y', strtotime(' +1 day'));
+          // $enddate = date('d-m-Y', strtotime(' +364 day'));
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -116,7 +117,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y');//date('d-m-Y', strtotime(' +1 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');//date('d-m-Y', strtotime(' +1 day'));
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -186,7 +187,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -234,7 +235,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -303,7 +304,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -351,7 +352,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -420,7 +421,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -468,7 +469,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -537,7 +538,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -584,7 +585,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -653,7 +654,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -701,7 +702,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -770,7 +771,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -818,7 +819,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -887,7 +888,7 @@
           $insert ="INSERT INTO users (user_id, name, email, phone) VALUES ('$finalid','$username','$useremail','$userphone')";
           if ($mysqli->query($insert)) {
 
-          $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+          $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
         // Storing Membership Details To The DATABASE
           $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";
@@ -935,7 +936,7 @@
          // END Process Of Creating User Membership ID
 
 
-         $startdate = date('d-m-Y'); $enddate = date('d-m-Y', strtotime(' +364 day'));
+         $startdate = date('d-m-Y'); $enddate = date('31-12-Y');
 
          // Storing Membership Details To The DATABASE
          $inser2="INSERT INTO member (user_id,membership_id,level,start_date,end_date) VALUES ('$finalid','$finalid2','$item_name','$startdate','$enddate')";

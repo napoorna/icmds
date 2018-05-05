@@ -93,6 +93,9 @@ if (isset($_SESSION['icmds_login'])) {
                     <div class="btn-group user-helper-dropdown">
                         <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                         <ul class="dropdown-menu pull-right">
+                          <?php if ($_SESSION['logged_tag'] == "admin"): ?>
+                            <li><a href="profile"><i class="material-icons">person</i>Profile</a></li>
+                          <?php endif; ?>
                             <li><a href="logout"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
                     </div>

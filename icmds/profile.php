@@ -1,28 +1,49 @@
 <?php
 session_start();
 if (isset($_SESSION['icmds_login'])) {
-require 'connection.php';
-if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
-
-  $eventid = $mysqli->real_escape_string($_GET['eventid']);
-  $ticketid = $mysqli->real_escape_string($_GET['ticketid']);
-  $res = $mysqli->query("SELECT * FROM tickets WHERE event_id='$eventid' AND ticket_id='$ticketid'");
-  if ($res->num_rows == 0) {
-    echo '<script type="text/javascript">';
-    echo 'alert("Invalid User Data");';
-    echo 'window.location.href="members"';
-    echo '</script>';
+  if ($_SESSION['logged_tag'] == "sub_admin") {
+    header('location: index');
   }
-  $row = $res->fetch_assoc();
+  require 'connection.php';
+
+  $sql = $mysqli->query("SELECT * FROM admin WHERE designation='admin'");
+  $res = $sql->fetch_assoc();
+
+  if (isset($_POST['updateadmin'])) {
+    $email = $mysqli->real_escape_string($_POST['email']);
+    $name = $mysqli->real_escape_string($_POST['name']);
+    $password = $mysqli->real_escape_string($_POST['password']);
+
+    if ($password=="") {
+      $update = "UPDATE admin SET email='$email', name='$name' WHERE designation='admin'";
+    } else {
+      $password = md5($password);
+      $update = "UPDATE admin SET password='$password', email='$email', name='$name' WHERE designation='admin'";
+    }
+      if ($mysqli->query($update)) {
+        $_SESSION['logged_email'] = $email;
+        $_SESSION['logged_name'] = $name;
+        echo '<script language="javascript">';
+        echo 'alert("Account has been Updated Successfully");';
+        echo 'window.location.href = "profile"';
+        echo '</script>';
+      } else {
+        echo '<script language="javascript">';
+        echo 'alert("Failed to Update Account, try Again");';
+        echo 'window.location.href = "profile"';
+        echo '</script>';
+      }
+
+  }
 
 ?>
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>View Ticket</title>
+    <title>Admins | ICMDS</title>
     <!-- Favicon-->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -49,7 +70,7 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
     <link href="css/themes/all-themes.css" rel="stylesheet" />
 </head>
 
-<body class="theme-red">
+<body class="theme-red" onload="check();">
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
         <div class="loader">
@@ -118,7 +139,7 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
             <!-- Menu -->
             <div class="menu">
                 <ul class="list">
-                    <li>
+                    <li class="active">
                         <a href="index">
                             <i class="material-icons">dashboard</i>
                             <span>Dashboard</span>
@@ -131,7 +152,7 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
                             <span>Admin</span>
                         </a>
                     </li>
-                    <li  class="active">
+                    <li>
                         <a href="members">
                             <i class="material-icons">group</i>
                             <span>Members</span>
@@ -336,89 +357,51 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
         <div class="container-fluid">
             <div class="row">
               <div class="card">
-
-                <div class="body" style="padding:3%;">
-                  <center><h3>Ticket Details</h3></center><br><br>
-                  <form>
-                    <div>
-                    <div class="col-sm-6">
-                      <label>Ticket ID</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $row['ticket_id']?>">
-                          </div>
-                      </div>
-                    </div>
-                    <?php $qry = $mysqli->query("SELECT event_name FROM event WHERE event_id='$eventid'"); $ress =  $qry->fetch_assoc();?>
-                    <div class="col-sm-6">
-                      <label>Event Name</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $ress['event_name']?>">
-                          </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label>Name</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $row['name']?>">
-                          </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label>Email</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $row['email']?>">
-                          </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label>Contact</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $row['phone']?>">
-                          </div>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <label>Total Fare</label>
-                      <div class="form-group">
-                          <div class="form-line">
-                              <input type="text" class="form-control" readonly value="<?php echo $row['ticket_price']?>">
-                          </div>
-                      </div>
-                    </div>
-                    </div>
-                      <br><hr>
-                      <h4 class="text-center">Ticket Categories</h4>
-                              <div class="table-responsive">
-                                  <table class="table table-bordered table-striped table-hover dataTable js-exportable">
-                                      <thead>
-                                          <tr>
-                                              <th>Ticket Category</th>
-                                              <th>No of Seats</th>
-                                              <th>Price</th>
-                                          </tr>
-                                      </thead>
-                                        <tbody>
-                                          <?php $sql = $mysqli->query("SELECT category,seat,price FROM ticket_category_map WHERE event_id='$eventid' AND ticket_id='$ticketid'");
-                                            while ($rew = mysqli_fetch_assoc($sql)) { ?>
-                                            <tr>
-                                              <td class="text-center"><?php echo $rew['category'];?></td>
-                                              <td class="text-center"><?php echo $rew['seat'];?></td>
-                                              <td class="text-center"><?php echo $rew['price'];?></td>
-                                            </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                  </table>
+                <div class="body">
+                  <center><h3>Update Super Admin</h3></center><br>
+                  <form id="form_validation" method="POST" action="profile">
+                      <div class="col-sm-12">
+                        <div class="col-sm-6">
+                          <div class="form-group form-float">
+                              <div class="form-line">
+                                  <input type="text" class="form-control" value="<?php echo $res['name'];?>" name="name" required>
+                                  <label class="form-label">Name</label>
                               </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group form-float">
+                              <div class="form-line">
+                                  <input type="email" class="form-control" value="<?php echo $res['email'];?>" name="email" required>
+                                  <label class="form-label">Email</label>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="col-sm-6">
+                          <div class="form-group form-float">
+                              <div class="form-line">
+                                  <input type="password" id="password" class="form-control" onkeyup="check();" name="password">
+                                  <label class="form-label">Password</label>
+                              </div>
+                              <div class="help-info">Keep it Blank to Unchanged</div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group form-float">
+                              <div class="form-line">
+                                  <input type="password" id="confirm" class="form-control" onkeyup="check();" name="confirm">
+                                  <label class="form-label">Confirm Password</label>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <center style="color:red;"><span id="span"></span></center>
+                      <center><button id="updatebtn" class="btn btn-primary waves-effect" type="submit" name="updateadmin">UPDATE PROFILE</button></center>
                   </form>
 
-                  <center><button type="button" name="button" onclick="history.go(-1)" class="btn btn-success">Go Back</button></center>
                 </div>
-
               </div>
             </div>
         </div>
@@ -435,6 +418,9 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
 
     <!-- Slimscroll Plugin Js -->
     <script src="plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+    <!-- Jquery Validation Plugin Css -->
+    <script src="plugins/jquery-validation/jquery.validate.js"></script>
 
     <!-- Waves Effect Plugin Js -->
     <script src="plugins/node-waves/waves.js"></script>
@@ -453,17 +439,29 @@ if (isset($_GET['eventid']) && isset($_GET['ticketid'])) {
     <!-- Custom Js -->
     <script src="js/admin.js"></script>
     <script src="js/pages/tables/jquery-datatable.js"></script>
-
+    <script src="js/pages/forms/form-validation.js"></script>
+    <script src="js/pages/forms/basic-form-elements.js"></script>
 
     <!-- Demo Js -->
     <script src="js/demo.js"></script>
+
+    <script type="text/javascript">
+      function check(){
+        var password = document.getElementById('password').value;
+        var confirm = document.getElementById('confirm').value;
+        if (password != confirm) {
+          document.getElementById('span').innerHTML = "Passowrd Mismatch";
+          document.getElementById('updatebtn').disabled = true;
+        } else {
+          document.getElementById('span').innerHTML = "";
+          document.getElementById('updatebtn').disabled = false;
+        }
+      }
+    </script>
 </body>
 
 </html>
 <?php
-} else {
-  header('location: events');
-}
 } else {
   $_SESSION['icmds_message'] = "Login First To Access That Page";
   header('location: login');

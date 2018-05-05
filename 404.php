@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Page Not Found :: ICMDS</title>
-	<link rel="stylesheet" href="404err/css/style.css">
+	<link rel="stylesheet" href="icmds/404err/css/style.css">
 	<link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,200italic,200,300,300italic,400italic,600,600italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 	<!-- For-Mobile-Apps-and-Meta-Tags -->
 		<meta name="viewport" content="width=device-width, initial-scale=1" />

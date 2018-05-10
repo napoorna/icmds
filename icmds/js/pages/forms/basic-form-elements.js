@@ -5,6 +5,7 @@ $(function () {
     //Datetimepicker plugin
     $('.datetimepicker').bootstrapMaterialDatePicker({
         format: 'dddd DD MMMM YYYY - HH:mm',
+        clearButton: true,
         minDate:new Date(),
         weekStart: 1
     }).on('change', function(e, date) {
@@ -13,6 +14,7 @@ $(function () {
 
      $('.datetimepicker1').bootstrapMaterialDatePicker({
      format: 'dddd DD MMMM YYYY - HH:mm',
+     clearButton: true,
      minDate:new Date(),
      weekStart: 1
     });
@@ -20,6 +22,7 @@ $(function () {
     //Datetimepicker plugin
     $('.datetimepicker2').bootstrapMaterialDatePicker({
         format: 'dddd DD MMMM YYYY - HH:mm',
+        clearButton: true,
         weekStart: 1
     }).on('change', function(e, date) {
         $('.datetimepicker3').bootstrapMaterialDatePicker('setMinDate', date);
@@ -27,6 +30,7 @@ $(function () {
 
      $('.datetimepicker3').bootstrapMaterialDatePicker({
      format: 'dddd DD MMMM YYYY - HH:mm',
+     clearButton: true,
      minDate:new Date(),
      weekStart: 1
     });

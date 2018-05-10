@@ -405,7 +405,7 @@ if (isset($_POST['addceventbtn'])) {
                                       <div class="col-sm-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input type="text" class="form-control" name="event_name" required>
+                                                <input type="text" class="form-control" name="event_name">
                                                 <label class="form-label">Event Name</label>
                                             </div>
                                         </div>
@@ -414,7 +414,7 @@ if (isset($_POST['addceventbtn'])) {
                                       <div class="col-sm-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input type="text" class="form-control" name="event_venue" required>
+                                                <input type="text" class="form-control" name="event_venue">
                                                 <label class="form-label">Event Venue</label>
                                             </div>
                                         </div>
@@ -425,7 +425,7 @@ if (isset($_POST['addceventbtn'])) {
 
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <textarea cols="30" rows="5" name="event_description" class="form-control no-resize" required></textarea>
+                                                <textarea cols="30" rows="5" name="event_description" class="form-control no-resize"></textarea>
                                                 <label class="form-label">Event Description</label>
                                             </div>
                                         </div>
@@ -436,20 +436,20 @@ if (isset($_POST['addceventbtn'])) {
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <div class="form-line">
-                                                        <input type="text" id="event_starttime" class="datetimepicker2 form-control" onchange="enable_end();" name="event_starttime" required placeholder="Please choose start date & time...">
+                                                        <input type="text" id="event_starttime" class="datetimepicker2 form-control" onchange="enable_end();" name="event_starttime" placeholder="Please choose start date & time...">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <div class="form-line">
-                                                        <input type="text" id="event_endtime" class="datetimepicker3 form-control" disabled name="event_endtime" required placeholder="Please choose end date & time...">
+                                                        <input type="text" id="event_endtime" class="datetimepicker3 form-control" disabled name="event_endtime"  placeholder="Please choose end date & time...">
                                                     </div>
                                                 </div>
                                             </div>
                                       </div>
                                       <div class="col-sm-12">
-                                        <input type="file" id="file" name="file">
+                                        <input type="file" id="file" name="file" required>
                                       </div>
                                     <center><button class="btn btn-primary waves-effect" type="submit" name="addceventbtn">SUBMIT</button></center>
                                 </form>

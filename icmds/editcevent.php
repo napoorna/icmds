@@ -450,7 +450,7 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                                         <div class="form-group form-float">
                                             <div class="form-line">
                                                 <input type="hidden" name="eventid" value="<?php echo $row['event_id'];?>">
-                                                <input type="text" class="form-control" name="event_name" value="<?php echo $row['event_name'];?>" required>
+                                                <input type="text" class="form-control" name="event_name" value="<?php echo $row['event_name'];?>">
                                                 <label class="form-label">Event Name</label>
                                             </div>
                                         </div>
@@ -458,7 +458,7 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                                       <div class="col-sm-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input type="text" class="form-control" name="event_venue" value="<?php echo $row['event_venue'];?>" required>
+                                                <input type="text" class="form-control" name="event_venue" value="<?php echo $row['event_venue'];?>">
                                                 <label class="form-label">Event Venue</label>
                                             </div>
                                         </div>
@@ -469,7 +469,7 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
 
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <textarea cols="30" rows="5" name="event_description" class="form-control no-resize" required><?php echo $row['event_description'];?></textarea>
+                                                <textarea cols="30" rows="5" name="event_description" class="form-control no-resize" ><?php echo $row['event_description'];?></textarea>
                                                 <label class="form-label">Event Description</label>
                                             </div>
                                         </div>
@@ -480,14 +480,14 @@ if (isset($_GET['eventid']) || (isset($_POST['updateeventbtn']) && isset($_POST[
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <div class="form-line">
-                                                        <input type="text" id="event_starttime" onchange="cleardata();" class="datetimepicker form-control" name="event_starttime" value="<?php echo $row['start_time'];?>" required placeholder="Please choose start date & time...">
+                                                        <input type="text" id="event_starttime" onchange="cleardata();" class="datetimepicker form-control" name="event_starttime" value="<?php echo $row['start_time'];?>" placeholder="Please choose start date & time...">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <div class="form-line">
-                                                        <input type="text" id="event_endtime" class="datetimepicker1 form-control" name="event_endtime" value="<?php echo $row['end_time'];?>" required placeholder="Please choose end date & time...">
+                                                    <div class="form-line"> 
+                                                        <input type="text" id="event_endtime" class="datetimepicker1 form-control" name="event_endtime" value="<?php echo $row['end_time'];?>" placeholder="Please choose end date & time...">
                                                     </div>
                                                 </div>
                                             </div>

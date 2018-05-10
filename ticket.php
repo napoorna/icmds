@@ -124,7 +124,11 @@ session_start();
         $sql1 = $mysqli->query("SELECT * FROM event WHERE status='1'");
         $change1 = 0;
         while ($row1 = mysqli_fetch_assoc($sql1)) {
+
           $eventid1 = $row1['event_id'];
+          $sql2 = $mysqli->query("SELECT MIN(price) AS p FROM event_ticket_category_map WHERE event_id='$eventid1'");
+          $row2 = $sql2->fetch_assoc();
+
           $result1 = explode(" ", $row1['start_time'], 6);
           $date1 = $result1[1];$month1 = $result1[2];$year1 = $result1[3];$day1 = $result1[0]; $display1 = $date1.' '.$month1.' '.$year1.' '.$day1; $time1 = $result1[5];
           $nmonth1 = date('m',strtotime($month1));
@@ -145,7 +149,7 @@ session_start();
 
                       <h2><?php echo $row1['event_name']?></h2>
                       <p><?php echo $row1['event_description']?></p>
-                      <button class="btn btn-success" onclick="check(<?php echo $row1['event_id'];?>);">BUY NOW</button>
+                      <button class="btn btn-success" onclick="check(<?php echo $row1['event_id'];?>);">BUY NOW (<?php echo '$'.$row2['p'];?>)</button>
 
                   </div>
               </div>

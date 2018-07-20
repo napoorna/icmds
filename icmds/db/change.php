@@ -19,12 +19,15 @@ if (isset($_SESSION['icmds_login'])) {
       }
       if ($mysqli->query($sql)) {
         if ($tag == 1) {
-          echo "Community Event Activated";
+          echo 1;
+          exit;
         } else {
-          echo "Community Event Deactivated";          
+          echo 2;
+          exit;
         }
       } else {
-        echo "Failed To Change Status";
+        echo 3;
+        exit;
       }
 
 

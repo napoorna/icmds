@@ -5,6 +5,24 @@ if (isset($_SESSION['icmds_login'])) {
     header('location: index');
   }
   require 'connection.php';
+
+  if (isset($_POST['remove'])) {
+    $mid = $mysqli->real_escape_string($_POST['mid']);
+    $name = $mysqli->real_escape_string($_POST['name']);
+    $mysqli->autocommit(FALSE);
+    $mysqli->commit();
+    $sql = "DELETE FROM users WHERE user_id='$mid'";
+    $sql1 = "DELETE FROM member WHERE user_id='$mid'";
+    if ($mysqli->query($sql) && $mysqli->query($sql1)) {
+      echo $name.',1';
+    } else {
+      $mysqli->rollback();
+      echo 2;
+    }
+    $mysqli->commit();
+    $mysqli->autocommit(TRUE);
+    exit;
+  }
 ?>
 ﻿<!DOCTYPE html>
 <html>
@@ -28,6 +46,9 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Animation Css -->
     <link href="plugins/animate-css/animate.css" rel="stylesheet" />
+
+    <!-- Sweet Alert Css -->
+    <link href="plugins/sweetalert/sweetalert.css" rel="stylesheet" />
 
     <!-- JQuery DataTable Css -->
     <link href="plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
@@ -329,10 +350,19 @@ if (isset($_SESSION['icmds_login'])) {
 
                 <div class="header">
                     <h2>
-                        All Events
+                        Members Database
                     </h2>
                 </div>
                 <div class="body">
+                    <div class="row text-center">
+                      <h3>Membership Records</h3>
+                    </div>
+                    <div class="body text-center">
+                      <div class="right">
+                        <a href="addmember"><button type="button" class="btn btn-success waves-effect">Add New Member</button></a>
+                      </div>
+                    </div>
+                    <div class="body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover dataTable js-exportable">
                             <thead>
@@ -341,6 +371,8 @@ if (isset($_SESSION['icmds_login'])) {
                                     <th class="text-center">Email</th>
                                     <th class="text-center">Contact</th>
                                     <th class="text-center">Action</th>
+                                    <th class="text-center">Membership</th>
+                                    <th class="text-center">Delete</th>
                                 </tr>
                             </thead>
                               <tbody>
@@ -350,12 +382,15 @@ if (isset($_SESSION['icmds_login'])) {
                                     <td><?php echo $row['name'];?></td>
                                     <td class="text-center"><?php echo $row['email'];?></td>
                                     <td class="text-center"><?php echo $row['phone'];?></td>
-                                    <td class="text-center"><a href="view_member?userid=<?php echo $row['user_id'];?>"><button type="button" class="btn btn-primary" name="button">View Details</button></a></td>
+                                    <td class="text-center"><a href="view_member?userid=<?php echo $row['user_id'];?>"><button type="button" class="btn btn-info waves-effect" name="button">View Details</button></a></td>
+                                    <td class="text-center"><a href="addmember?uid=<?php echo $row['user_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">ADD</button></a></td>
+                                    <td class="text-center"><button type="button" onclick="remove('<?php echo $row['name'].','.$row['user_id'];?>');" class="btn btn-danger waves-effect" name="button">REMOVE</button></td>
                                   </tr>
                                   <?php } ?>
                               </tbody>
                         </table>
                     </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -373,6 +408,9 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Slimscroll Plugin Js -->
     <script src="plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+    <!-- Sweet Alert Plugin Js -->
+    <script src="plugins/sweetalert/sweetalert.min.js"></script>
 
     <!-- Waves Effect Plugin Js -->
     <script src="plugins/node-waves/waves.js"></script>
@@ -394,6 +432,76 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Demo Js -->
     <script src="js/demo.js"></script>
+
+    <script type="text/javascript">
+      function remove(f){
+        var a = f.split(",");
+        swal({
+            title: "<strong>Confirmation!</strong>",
+            text: "<span style=\"color: #dd1828\">Are You Sure To Remove "+a[0]+" ?</span>",
+            type: "info",
+            html: true,
+            allowEscapeKey: false,
+            showCancelButton: true,
+            confirmButtonColor: "#dd1828",
+            confirmButtonText: "REMOVE",
+            cancelButtonText: "NOT NOW",
+            closeOnConfirm: false,
+            closeOnCancel: false,
+            showLoaderOnConfirm: true
+        }, function (isConfirm) {
+            if (isConfirm) {
+                var dataString = 'mid='+ a[1] + '&remove=1&name='+ a[0];
+                jQuery.ajax({
+                  url: "members.php",
+                  data: dataString,
+                  type: "POST",
+                  success:function(data){
+                    setTimeout(function () {
+                        var r = data.split(",");
+                        if (r[1] == 1) {
+                          swal({
+                            title: "Removed!",
+                            text: "All Record of <span style=\"color: #225bcc\">"+r[0]+"</span> has been Removed Successfully!",
+                            type: "success",
+                            html: true,
+                            confirmButtonColor: "#686fed",
+                            confirmButtonText: "CLOSE",
+                            closeOnConfirm: false,
+                          },function(){
+                            swal.close();
+                            var delay = 150;
+                            setTimeout(function(){ window.location = "members"; }, delay);
+                          });
+                        } else {
+                          swal({
+                            title: "Failed!",
+                            text: "Something Went Wrong, Try Again!",
+                            type: "error",
+                            confirmButtonColor: "#686fed",
+                            confirmButtonText: "CLOSE",
+                            closeOnConfirm: false,
+                          },function(){
+                            swal.close();
+                            var delay = 150;
+                            setTimeout(function(){ window.location = "members"; }, delay);
+                          });
+                        }
+                    }, 1500);
+                  },
+                  error:function (data){
+                      setTimeout(function () {
+                          swal(data);
+                      }, 1500);
+                  }
+                });
+            } else {
+                swal.close();
+            }
+        });
+      }
+    </script>
+
 </body>
 
 </html>

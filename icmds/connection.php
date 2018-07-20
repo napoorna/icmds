@@ -7,7 +7,7 @@
 
 $host = 'localhost';
 $user = 'root';
-$pass = 'password';
+$pass = '';
 $db = 'icmds';
 $mysqli = new mysqli($host,$user,$pass,$db);
 ?>

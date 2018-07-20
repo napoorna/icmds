@@ -1,6 +1,6 @@
 <?php
  require 'connection.php';
- $current_time = strtotime(date("Y-m-d H:i", strtotime("-5 hours -30 minutes")));
+ $current_time = strtotime(date("Y-m-d H:i", strtotime("-7 hours")));
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -2,6 +2,30 @@
 session_start();
 if (isset($_SESSION['icmds_login'])) {
   require 'connection.php';
+
+  if (isset($_POST['remove'])) {
+    $eid = $mysqli->real_escape_string($_POST['eid']);
+    $name = $mysqli->real_escape_string($_POST['name']);
+    $a = array();
+    $sql6 = $mysqli->query("SELECT docs FROM ceventdocs WHERE event_id='$eid'");
+    while ($r = mysqli_fetch_assoc($sql6)) {
+        $a[] = 'db/images/'.$r['docs'];
+    }
+
+    $sql1 = "DELETE FROM cevent WHERE event_id='$eid'";
+    $sql2 = "DELETE FROM ceventdocs WHERE event_id='$eid'";
+    if ($mysqli->query($sql1) && $mysqli->query($sql2)) {
+      foreach ($a as $key => $value) {
+        unlink($value);
+      }
+      echo $name.',1';
+    } else {
+      $mysqli->rollback();
+      echo 2;
+    }
+    exit;
+  }
+
 ?>
 ﻿<!DOCTYPE html>
 <html>
@@ -22,6 +46,9 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Waves Effect Css -->
     <link href="plugins/node-waves/waves.css" rel="stylesheet" />
+
+    <!-- Sweet Alert Css -->
+    <link href="plugins/sweetalert/sweetalert.css" rel="stylesheet" />
 
     <!-- Animation Css -->
     <link href="plugins/animate-css/animate.css" rel="stylesheet" />
@@ -340,7 +367,8 @@ if (isset($_SESSION['icmds_login'])) {
                                     <th>E.Venue</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
-                                    <th>Status</th>
+                                    <!-- <th>Status</th> -->
+                                    <th>Event</th>
                                     <th>Edit</th>
                                 </tr>
                             </thead>
@@ -354,10 +382,11 @@ if (isset($_SESSION['icmds_login'])) {
                                     <td><?php echo $row['start_time'];?></td>
                                     <td><?php echo $row['end_time'];?></td>
                                     <?php if ($row['active']==1): ?>
-                                    <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-success waves-effect" name="button">Active</button></td>
+                                    <!-- <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-success waves-effect" name="button">Active</button></td> -->
                                     <?php else: ?>
-                                    <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-danger waves-effect" name="button">Deactive</button></td>
+                                    <!-- <td class="text-center"><button type="button" onclick="change(<?php echo $row['event_id'];?>);" class="btn btn-danger waves-effect" name="button">Deactive</button></td> -->
                                     <?php endif; ?>
+                                    <td> <button type="button" onclick="remove('<?php echo $row['event_name'].','.$row['event_id'];?>');" class="btn btn-danger waves-effect">REMOVE</button> </td>
                                     <td><a href="editcevent?eventid=<?php echo $row['event_id'];?>"><button type="button" class="btn btn-primary waves-effect" name="button">Edit Event</button></a></td>
                                   </tr>
                                   <?php } ?>
@@ -381,6 +410,9 @@ if (isset($_SESSION['icmds_login'])) {
 
     <!-- Select Plugin Js -->
     <script src="plugins/bootstrap-select/js/bootstrap-select.js"></script>
+
+    <!-- Sweet Alert Plugin Js -->
+    <script src="plugins/sweetalert/sweetalert.min.js"></script>
 
     <!-- Slimscroll Plugin Js -->
     <script src="plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
@@ -416,8 +448,48 @@ if (isset($_SESSION['icmds_login'])) {
         data: dataString,
         type: "POST",
         success:function(data){
-          alert(data);
-          window.location.href="cevents";
+          if (data == 1) {
+            swal({
+              title: "Success!",
+              text: "Community Event is now <span style=\"color: #225bcc\">Activated</span>",
+              type: "success",
+              html: true,
+              confirmButtonColor: "#686fed",
+              confirmButtonText: "CLOSE",
+              closeOnConfirm: false,
+            },function(){
+              swal.close();
+              var delay = 150;
+              setTimeout(function(){ window.location = "cevents"; }, delay);
+            });
+          } else if (data == 2) {
+            swal({
+              title: "Success!",
+              text: "Community Event is now <span style=\"color: #dd1828\">Deactivated</span>",
+              type: "success",
+              html: true,
+              confirmButtonColor: "#686fed",
+              confirmButtonText: "CLOSE",
+              closeOnConfirm: false,
+            },function(){
+              swal.close();
+              var delay = 150;
+              setTimeout(function(){ window.location = "cevents"; }, delay);
+            });
+          } else {
+            swal({
+              title: "Failed!",
+              text: "Something Went Wrong, Try Again!",
+              type: "error",
+              confirmButtonColor: "#686fed",
+              confirmButtonText: "CLOSE",
+              closeOnConfirm: false,
+            },function(){
+              swal.close();
+              var delay = 150;
+              setTimeout(function(){ window.location = "cevents"; }, delay);
+            });
+          }
           // var n = data.length;
           // if (n==2) {
           //     var totalval = total.substring(12);
@@ -428,6 +500,76 @@ if (isset($_SESSION['icmds_login'])) {
           //   alert(data);
           // }
         }
+        });
+      }
+    </script>
+
+
+    <script type="text/javascript">
+      function remove(f){
+        var a = f.split(",");
+        swal({
+            title: "<strong>All Data Will be Erased!</strong>",
+            text: "<span style=\"color: #dd1828\">All Data of <span style=\"color: #225bcc\">"+a[0]+"</span> Community Event will be erased, Including all files of this Community Event. Are You Sure To Remove <span style=\"color: #225bcc\">"+a[0]+"</span> Community Event ?</span>",
+            type: "info",
+            html: true,
+            allowEscapeKey: false,
+            showCancelButton: true,
+            confirmButtonColor: "#dd1828",
+            confirmButtonText: "REMOVE EVERYTHING",
+            cancelButtonText: "NOT NOW",
+            closeOnConfirm: false,
+            closeOnCancel: false,
+            showLoaderOnConfirm: true
+        }, function (isConfirm) {
+            if (isConfirm) {
+                var dataString = 'eid='+ a[1] + '&remove=1&name='+ a[0];
+                jQuery.ajax({
+                  url: "cevents.php",
+                  data: dataString,
+                  type: "POST",
+                  success:function(data){
+                    setTimeout(function () {
+                        var r = data.split(",");
+                        if (r[1] == 1) {
+                          swal({
+                            title: "Removed!",
+                            text: "All Record of <span style=\"color: #225bcc\">"+r[0]+"</span> Community Event has been Removed Successfully!",
+                            type: "success",
+                            html: true,
+                            confirmButtonColor: "#686fed",
+                            confirmButtonText: "CLOSE",
+                            closeOnConfirm: false,
+                          },function(){
+                            swal.close();
+                            var delay = 150;
+                            setTimeout(function(){ window.location = "cevents"; }, delay);
+                          });
+                        } else {
+                          swal({
+                            title: "Failed!",
+                            text: "Something Went Wrong, Try Again!",
+                            type: "error",
+                            confirmButtonColor: "#686fed",
+                            confirmButtonText: "CLOSE",
+                            closeOnConfirm: false,
+                          },function(){
+                            swal.close();
+                            var delay = 150;
+                            setTimeout(function(){ window.location = "cevents"; }, delay);
+                          });
+                        }
+                    }, 1500);
+                  },
+                  error:function (data){
+                      setTimeout(function () {
+                          swal(data);
+                      }, 1500);
+                  }
+                });
+            } else {
+                swal.close();
+            }
         });
       }
     </script>
